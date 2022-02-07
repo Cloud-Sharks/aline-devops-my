@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: underwriter-deployment-my
-  namespace: aline-eks-my
+  namespace: aline-fargate-ns-my
   labels:
     app: underwriter-ms-my
 
@@ -35,7 +35,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: underwriter-service-my
-  namespace: aline-eks-my
+  namespace: aline-fargate-ns-my
   labels:
     app: underwriter-ms-my
 spec:
