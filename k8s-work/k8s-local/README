@@ -1,0 +1,6 @@
+Using this k8s deployment:
+using minikube
+apply aline-config/secret-config/k8s-pv files
+apply k8s-db file
+once db is initialized and ready for connection, apply k8s-bank/k8s-transaction/k8s-underwriter/k8s-user files
+to access services, use 'minikube service {service-name}'

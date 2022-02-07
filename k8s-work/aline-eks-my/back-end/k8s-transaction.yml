@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: transaction-deployment-my
+  namespace: aline-eks-my
+  labels:
+    app: transaction-ms-my
+
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: transaction-ms-my
+  template:
+    metadata:
+      labels:
+        app: transaction-ms-my
+    spec:
+      containers:
+        - name: transaction-ms-my
+          image: ${AWS_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/my-transaction-microservice:v1.0
+          ports:
+            - containerPort: 8073
+          envFrom:
+            - configMapRef:
+                name: eks-configmap
+            - secretRef:
+                name: eks-secret
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: transaction-service-my
+  namespace: aline-eks-my
+  labels:
+    app: transaction-ms-my
+spec:
+  selector:
+    app: transaction-ms-my
+  ports:
+    - protocol: TCP
+      port: 8073
+      targetPort: 8073

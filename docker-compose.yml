@@ -1,0 +1,66 @@
+version: '3'
+
+services:
+  aline_db:
+    image: myates7748/aline-db:v1.0
+    container_name: aline-db
+    ports:
+      - 3307:3306
+    networks:
+      - aline_nw
+
+  bank-ms:
+    image: myates7748/bank-ms:v1.1
+    container_name: bank-ms
+    depends_on:
+      - aline_db
+    restart: on-failure:3
+    env_file:
+      - dev_setup.env
+    ports:
+      - 8083:8083
+    networks:
+      - aline_nw
+
+  transaction-ms:
+    image: myates7748/transaction-ms:v1.1
+    container_name: transaction-ms
+    depends_on:
+      - aline_db
+    restart: on-failure:3
+    env_file:
+      - dev_setup.env
+    ports:
+      - 8073:8073
+    networks:
+      - aline_nw
+
+  underwriter-ms:
+    image: myates7748/underwriter-ms:v1.1
+    container_name: underwriter-ms
+    depends_on:
+      - aline_db
+    restart: on-failure:3
+    env_file:
+      - dev_setup.env
+    ports:
+      - 8071:8071
+    networks:
+      - aline_nw
+
+  user-ms:
+    image: myates7748/user-ms:v1.1
+    container_name: user-ms
+    depends_on:
+      - aline_db
+    restart: on-failure:3
+    env_file:
+      - dev_setup.env
+    ports:
+      - 8070:8070
+    networks:
+      - aline_nw
+
+networks:
+  aline_nw:
+    name: aline

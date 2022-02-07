@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: db-deploy
+  labels:
+    app: db
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: db
+  serviceName: db-service
+  template:
+    metadata:
+      labels:
+        app: db
+    spec:
+      containers:
+        - name: db
+          image: myates7748/aline-db:v1.0
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - name: db-storage
+              mountPath: /var/lib/mysql
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: aline-secret-db
+                  key: MYSQL_ROOT_PASSWORD
+            - name: MYSQL_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: aline-secret-db
+                  key: MYSQL_DATABASE
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: aline-secret-db
+                  key: MYSQL_USER
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: aline-secret-db
+                  key: MYSQL_PASSWORD 
+      volumes:
+        - name: db-storage
+          persistentVolumeClaim:
+            claimName: db-persist-claim
+  
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: db-service
+  labels:
+    app: db
+spec:
+  selector:
+    app: db
+  clusterIP: None
+  ports:
+    - protocol: TCP
+      port: 3306
+      targetPort: 3306

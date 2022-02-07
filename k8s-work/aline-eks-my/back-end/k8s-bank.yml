@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bank-deployment-my
+  namespace: aline-eks-my
+  labels:
+    app: bank-ms-my
+
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: bank-ms-my
+  template:
+    metadata:
+      labels:
+        app: bank-ms-my
+    spec:
+      containers:
+        - name: bank-ms-my
+          image: ${AWS_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/my-bank-microservice:v1.0
+          ports:
+            - containerPort: 8083
+          envFrom:
+            - configMapRef:
+                name: eks-configmap
+            - secretRef:
+                name: eks-secret
+  
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: bank-service-my
+  namespace: aline-eks-my
+  labels:
+    app: bank-ms-my
+spec:
+  selector:
+    app: bank-ms-my
+  ports:
+    - protocol: TCP
+      port: 8083
+      targetPort: 8083

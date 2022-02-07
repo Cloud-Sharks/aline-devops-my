@@ -4,6 +4,8 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 !**/src/test/resources/
+*.env
+*config.yml
 
 ### STS ###
 .apt_generated
@@ -47,3 +49,8 @@ local.properties
 .loadpath
 .recommenders
 
+### Python ###
+__pycache__/
+*.pyc
+.pytest_cache/
+*_test.py

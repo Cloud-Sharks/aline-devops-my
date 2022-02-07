@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: member-deploy
+  labels:
+    app: member-dash
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: member-dash
+  template:
+    metadata:
+      labels:
+        app: member-dash
+    spec:
+      containers:
+        - name: member-dash
+          image: myates7748/member-dash:v1.0
+          resources:
+            limits:
+                memory: 512Mi
+                cpu: 500m
+          ports:
+            - containerPort: 4200
+  
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: member-service
+spec:
+  type: NodePort
+  selector:
+    app: member-dash
+  ports:
+    - protocol: TCP
+      port: 4200
+      targetPort: 4200
+      nodePort: 30420

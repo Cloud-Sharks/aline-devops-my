@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: underwriter-deployment-my
+  namespace: aline-eks-my
+  labels:
+    app: underwriter-ms-my
+
+spec:
+  replicas: 
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: underwriter-ms-my
+  template:
+    metadata:
+      labels:
+        app: underwriter-ms-my
+    spec:
+      containers:
+        - name: underwriter-ms-my
+          image: ${AWS_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/my-underwriter-microservice:v1.0
+          ports:
+            - containerPort: 8071
+          envFrom:
+            - configMapRef:
+                name: eks-configmap
+            - secretRef:
+                name: eks-secret
+  
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: underwriter-service-my
+  namespace: aline-eks-my
+  labels:
+    app: underwriter-ms-my
+spec:
+  selector:
+    app: underwriter-ms-my
+  ports:
+    - protocol: TCP
+      port: 8071
+      targetPort: 8071
