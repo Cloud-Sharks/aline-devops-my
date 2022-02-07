@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: user-deployment-my
-  namespace: aline-eks-my
+  namespace: aline-fargate-ns-my
   labels:
     app: user-ms-my
 
@@ -35,7 +35,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: user-service-my
-  namespace: aline-eks-my
+  namespace: aline-fargate-ns-my
   labels:
     app: user-ms-my
 spec:
