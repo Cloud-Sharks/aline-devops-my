@@ -20,7 +20,11 @@ spec:
     spec:
       containers:
         - name: transaction-ms-my
-          image: ${AWS_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/my-transaction-microservice:v1.0
+          image: ${AWS_ID}.dkr.ecr.us-east-1.amazonaws.com/my-transaction-microservice:v1.0
+          resources:
+            limits:
+                memory: 512Mi
+                cpu: 500m
           ports:
             - containerPort: 8073
           envFrom:
@@ -45,3 +49,4 @@ spec:
     - protocol: TCP
       port: 8073
       targetPort: 8073
+      nodePort: 30873

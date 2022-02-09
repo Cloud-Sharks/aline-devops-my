@@ -7,7 +7,7 @@ metadata:
     app: underwriter-ms-my
 
 spec:
-  replicas: 
+  replicas: 2
   strategy:
     type: RollingUpdate
   selector:
@@ -20,7 +20,11 @@ spec:
     spec:
       containers:
         - name: underwriter-ms-my
-          image: ${AWS_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/my-underwriter-microservice:v1.0
+          image: ${AWS_ID}.dkr.ecr.us-east-1.amazonaws.com/my-underwriter-microservice:v1.0
+          resources:
+            limits:
+                memory: 512Mi
+                cpu: 500m
           ports:
             - containerPort: 8071
           envFrom:
@@ -45,3 +49,4 @@ spec:
     - protocol: TCP
       port: 8071
       targetPort: 8071
+      nodePort: 30871

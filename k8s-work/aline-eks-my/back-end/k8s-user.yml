@@ -20,7 +20,11 @@ spec:
     spec:
       containers:
         - name: user-ms-my
-          image: ${AWS_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/my-user-microservice:v1.0
+          image: ${AWS_ID}.dkr.ecr.us-east-1.amazonaws.com/my-user-microservice:v1.0
+          resources:
+            limits:
+                memory: 512Mi
+                cpu: 500m
           ports:
             - containerPort: 8070
           envFrom:
@@ -45,3 +49,4 @@ spec:
     - protocol: TCP
       port: 8070
       targetPort: 8070
+      nodePort: 30870
