@@ -8,13 +8,18 @@ services:
       - 3307:3306
     networks:
       - aline_nw
+    healthcheck:
+      test: "/usr/bin/mysql --user=$$MYSQL_USER --password=$$MYSQL_PASSWORD --execute \"SHOW DATABASES;\""
+      interval: 60s
+      timeout: 30s
+      retries: 10
 
   bank-ms:
-    image: myates7748/bank-ms:v1.1
+    image: myates7748/bank-ms:v1.2
     container_name: bank-ms
     depends_on:
-      - aline_db
-    restart: on-failure:3
+      aline_db:
+        condition: service_healthy
     env_file:
       - dev_setup.env
     ports:
@@ -23,11 +28,11 @@ services:
       - aline_nw
 
   transaction-ms:
-    image: myates7748/transaction-ms:v1.1
+    image: myates7748/transaction-ms:v1.2
     container_name: transaction-ms
     depends_on:
-      - aline_db
-    restart: on-failure:3
+      aline_db:
+        condition: service_healthy
     env_file:
       - dev_setup.env
     ports:
@@ -36,11 +41,11 @@ services:
       - aline_nw
 
   underwriter-ms:
-    image: myates7748/underwriter-ms:v1.1
+    image: myates7748/underwriter-ms:v1.2
     container_name: underwriter-ms
     depends_on:
-      - aline_db
-    restart: on-failure:3
+      aline_db:
+        condition: service_healthy
     env_file:
       - dev_setup.env
     ports:
@@ -49,11 +54,11 @@ services:
       - aline_nw
 
   user-ms:
-    image: myates7748/user-ms:v1.1
+    image: myates7748/user-ms:v1.2
     container_name: user-ms
     depends_on:
-      - aline_db
-    restart: on-failure:3
+      aline_db:
+        condition: service_healthy
     env_file:
       - dev_setup.env
     ports:
