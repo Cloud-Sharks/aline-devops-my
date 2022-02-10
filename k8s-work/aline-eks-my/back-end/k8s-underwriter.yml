@@ -22,9 +22,12 @@ spec:
         - name: underwriter-ms-my
           image: ${AWS_ID}.dkr.ecr.us-east-1.amazonaws.com/my-underwriter-microservice:v1.0
           resources:
+            requests:
+              memory: 0.5Gi
+              cpu: 0.25vCPU
             limits:
-                memory: 512Mi
-                cpu: 500m
+              memory: 1Gi
+              cpu: 0.5vCPU
           ports:
             - containerPort: 8071
           envFrom:
@@ -43,6 +46,7 @@ metadata:
   labels:
     app: underwriter-ms-my
 spec:
+  type: NodePort
   selector:
     app: underwriter-ms-my
   ports:

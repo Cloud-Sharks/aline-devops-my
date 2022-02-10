@@ -22,9 +22,12 @@ spec:
         - name: bank-ms-my
           image: ${AWS_ID}.dkr.ecr.us-east-1.amazonaws.com/my-bank-microservice:v1.0
           resources:
+            requests:
+              memory: 0.5Gi
+              cpu: 0.25m
             limits:
-                memory: 512Mi
-                cpu: 500m
+              memory: 1Gi
+              cpu: 0.5m
           ports:
             - containerPort: 8083
           envFrom:
@@ -40,13 +43,10 @@ kind: Service
 metadata:
   name: bank-service-my
   namespace: aline-fargate-ns-my
-  # annotations:
-  #   service.beta.kubernetes.io/aws-load-balancer-type: external
-  #   service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
   labels:
     app: bank-ms-my
 spec:
-  type: LoadBalancer
+  type: NodePort
   selector:
     app: bank-ms-my
   ports:
