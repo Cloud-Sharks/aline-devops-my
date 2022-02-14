@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: user-ms-my
-          image: ${AWS_ID}.dkr.ecr.us-east-1.amazonaws.com/my-user-microservice:v1.0
+          image: 862167864120.dkr.ecr.us-east-1.amazonaws.com/my-user-microservice:v1.0
           resources:
             requests:
               memory: 0.5Gi
@@ -43,10 +43,13 @@ kind: Service
 metadata:
   name: user-service-my
   namespace: aline-fargate-ns-my
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: external
+    service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
   labels:
     app: user-ms-my
 spec:
-  type: NodePort
+  type: LoadBalancer
   selector:
     app: user-ms-my
   ports:

@@ -1,17 +1,20 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: aline-my
+  name: aline-ingress-my
   namespace: aline-fargate-ns-my
   annotations:
     kubernetes.io/ingress.class: alb
     alb.ingress.kubernetes.io/target-type: ip
     alb.ingress.kubernetes.io/scheme: internet-facing
+  labels:
+    app: aline-ingress-my
 spec:
   rules:
     - http:
         paths:
-          - path: /
+          - path: /*
+            pathType: Prefix
             backend:
               serviceName: bank-service-my
               servicePort: 8083

@@ -7,9 +7,11 @@ create fargate profile
     - eksctl create fargateprofile --cluster=clustername --name=profilename --namespace=namespacename
 create namespace
     - kubectl create namespace namespacename
-apply files to fargate namespace
-    - kubectl apply -f file.yml
 set up ALB ingress controller
     - see www.learnaws.org/2019/12/16/running-eks-on-aws-fargate/
+    - see https://aws.amazon.com/blogs/containers/using-alb-ingress-controller-with-amazon-eks-on-fargate/
+    - see https://docs.aws.amazon.com/eks/latest/userguide/aws-load-balancer-controller.html
+apply files to fargate namespace
+    - kubectl apply -f file.yml
 delete resources when done
     - eksctl delete cluster --name=clustername --region=region
