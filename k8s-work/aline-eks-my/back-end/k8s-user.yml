@@ -21,13 +21,6 @@ spec:
       containers:
         - name: user-ms-my
           image: 862167864120.dkr.ecr.us-east-1.amazonaws.com/my-user-microservice:v1.0
-          resources:
-            requests:
-              memory: 0.5Gi
-              cpu: 0.25vCPU
-            limits:
-              memory: 1Gi
-              cpu: 0.5vCPU
           ports:
             - containerPort: 8070
           envFrom:
@@ -43,17 +36,13 @@ kind: Service
 metadata:
   name: user-service-my
   namespace: aline-fargate-ns-my
-  annotations:
-    service.beta.kubernetes.io/aws-load-balancer-type: external
-    service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
   labels:
     app: user-ms-my
 spec:
-  type: LoadBalancer
+  type: NodePort
   selector:
     app: user-ms-my
   ports:
     - protocol: TCP
       port: 8070
       targetPort: 8070
-      nodePort: 30870

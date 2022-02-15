@@ -21,13 +21,6 @@ spec:
       containers:
         - name: transaction-ms-my
           image: 862167864120.dkr.ecr.us-east-1.amazonaws.com/my-transaction-microservice:v1.0
-          resources:
-            requests:
-              memory: 0.5Gi
-              cpu: 0.25vCPU
-            limits:
-              memory: 1Gi
-              cpu: 0.5vCPU
           ports:
             - containerPort: 8073
           envFrom:
@@ -43,17 +36,13 @@ kind: Service
 metadata:
   name: transaction-service-my
   namespace: aline-fargate-ns-my
-  annotations:
-    service.beta.kubernetes.io/aws-load-balancer-type: external
-    service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
   labels:
     app: transaction-ms-my
 spec:
-  type: LoadBalancer
+  type: NodePort
   selector:
     app: transaction-ms-my
   ports:
     - protocol: TCP
       port: 8073
       targetPort: 8073
-      nodePort: 30873

@@ -1,20 +1,41 @@
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
-  name: aline-ingress-my
   namespace: aline-fargate-ns-my
+  name: aline-ingress-my
   annotations:
     kubernetes.io/ingress.class: alb
-    alb.ingress.kubernetes.io/target-type: ip
     alb.ingress.kubernetes.io/scheme: internet-facing
-  labels:
-    app: aline-ingress-my
+    alb.ingress.kubernetes.io/target-type: ip
 spec:
   rules:
     - http:
         paths:
-          - path: /*
-            pathType: Prefix
+          - path: /users*
+            backend:
+              serviceName: user-service-my
+              servicePort: 8070
+          - path: /login*
+            backend:
+              serviceName: user-service-my
+              servicePort: 8070
+          - path: /applic*
+            backend:
+              serviceName: underwriter-service-my
+              servicePort: 8071
+          - path: /members*
             backend:
               serviceName: bank-service-my
               servicePort: 8083
+          - path: /branch*
+            backend:
+              serviceName: bank-service-my
+              servicePort: 8083
+          - path: /bank*
+            backend:
+              serviceName: bank-service-my
+              servicePort: 8083
+          - path: /trans*
+            backend:
+              serviceName: transaction-service-my
+              servicePort: 8073

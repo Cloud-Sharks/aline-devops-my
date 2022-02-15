@@ -21,13 +21,6 @@ spec:
       containers:
         - name: underwriter-ms-my
           image: 862167864120.dkr.ecr.us-east-1.amazonaws.com/my-underwriter-microservice:v1.0
-          resources:
-            requests:
-              memory: 0.5Gi
-              cpu: 0.25vCPU
-            limits:
-              memory: 1Gi
-              cpu: 0.5vCPU
           ports:
             - containerPort: 8071
           envFrom:
@@ -43,17 +36,13 @@ kind: Service
 metadata:
   name: underwriter-service-my
   namespace: aline-fargate-ns-my
-  annotations:
-    service.beta.kubernetes.io/aws-load-balancer-type: external
-    service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
   labels:
     app: underwriter-ms-my
 spec:
-  type: LoadBalancer
+  type: NodePort
   selector:
     app: underwriter-ms-my
   ports:
     - protocol: TCP
       port: 8071
       targetPort: 8071
-      nodePort: 30871
