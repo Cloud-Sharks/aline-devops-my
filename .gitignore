@@ -7,6 +7,8 @@ target/
 *.env
 *config.yml
 *config.json
+*.hcl
+.terraform/
 
 ### STS ###
 .apt_generated
