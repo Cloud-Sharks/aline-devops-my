@@ -1,0 +1,10 @@
+ami_code_public = "ami-0573b70afecda915d"
+instance_type_public = "t2.micro"
+# key_name_public = todo
+public_subnet = "subnet-0f808715d40640c38"
+external_sg_my = "sg-0b123169a99010c52"
+ami_code_private = "ami-0573b70afecda915d"
+instance_type_private = "t2.micro"
+# key_name_private = todo
+private_subnet = "subnet-0a7ce0f81b263f862"
+internal_sg_my = "sg-081dbe75270044173"
