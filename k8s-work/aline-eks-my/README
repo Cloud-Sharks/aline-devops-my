@@ -11,5 +11,7 @@ set up ALB ingress controller
     - see https://docs.aws.amazon.com/eks/latest/userguide/aws-load-balancer-controller.html
 apply files to fargate namespace
     - kubectl apply -f file.yml
+associate r53 record with ALB
+    - use route 53 console
 delete resources when done
     - eksctl delete cluster --name=clustername --region=region
