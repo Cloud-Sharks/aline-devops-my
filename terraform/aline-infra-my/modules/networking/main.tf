@@ -90,6 +90,8 @@ resource "aws_subnet" "aline_public_sub1_my"{
     map_public_ip_on_launch = true
     tags = {
         Name = "aline_public_sub1_my"
+        "kubernetes.io/cluster/aline-eks-my" = "owned"
+        "kubernetes.io/role/elb" = "1"
     }
     depends_on = [aws_vpc.aline_vpc_my]
 }
@@ -101,6 +103,8 @@ resource "aws_subnet" "aline_public_sub2_my"{
     map_public_ip_on_launch = true
     tags = {
         Name = "aline_public_sub2_my"
+        "kubernetes.io/cluster/aline-eks-my" = "owned"
+        "kubernetes.io/role/elb" = "1"
     }
     depends_on = [aws_vpc.aline_vpc_my]
 }
@@ -149,6 +153,8 @@ resource "aws_subnet" "aline_private_sub1_my"{
     map_public_ip_on_launch = false
     tags = {
         Name = "aline_private_sub1_my"
+        "kubernetes.io/cluster/aline-eks-my" = "owned"
+        "kubernetes.io/role/internal-elb" = "1"
     }
     depends_on = [aws_vpc.aline_vpc_my]
 }
@@ -160,6 +166,8 @@ resource "aws_subnet" "aline_private_sub2_my"{
     map_public_ip_on_launch = false
     tags = {
         Name = "aline_private_sub2_my"
+        "kubernetes.io/cluster/aline-eks-my" = "owned"
+        "kubernetes.io/role/internal-elb" = "1"
     }
     depends_on = [aws_vpc.aline_vpc_my]
 }
