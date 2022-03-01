@@ -9,6 +9,7 @@ target/
 *config.json
 *.hcl
 .terraform/
+*.cmd
 
 ### STS ###
 .apt_generated
