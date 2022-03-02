@@ -9,7 +9,7 @@ metadata:
     alb.ingress.kubernetes.io/target-type: ip
 spec:
   rules:
-    - host: my.cloudsharks.name
+    - host: my.dev.cloudsharks.name
       http:
         paths:
           - path: /users*
