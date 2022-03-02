@@ -1,14 +1,14 @@
-resource "aws_vpc" "aline_vpc_my"{
+resource "aws_vpc" "aline_vpc_my_dev"{ // add specification for env with params
     cidr_block = var.vpc_block
     tags = {
-      Name = "aline_vpc_my"
+      Name = "aline_vpc_my_dev"
     }
 }
 
-resource "aws_internet_gateway" "aline_igw_my"{
-    vpc_id = aws_vpc.aline_vpc_my.id
+resource "aws_internet_gateway" "aline_igw_my_dev"{
+    vpc_id = aws_vpc.aline_vpc_my_dev.id
     tags = {
-        Name = "aline_igw_my"
+        Name = "aline_igw_my_dev"
     }
 }
 
@@ -72,112 +72,112 @@ resource "aws_security_group" "aline_subnet_communication_my"{
     }
 }
 
-resource "aws_route_table" "aline_route_table_public_my"{
-    vpc_id = aws_vpc.aline_vpc_my.id
+resource "aws_route_table" "aline_route_table_public_my_dev"{
+    vpc_id = aws_vpc.aline_vpc_my_dev.id
     route{
         cidr_block = "0.0.0.0/0"
-        gateway_id = aws_internet_gateway.aline_igw_my.id
+        gateway_id = aws_internet_gateway.aline_igw_my_dev.id
     }
     tags = {
-        Name = "aline_route_table_public_my"
+        Name = "aline_route_table_public_my_dev"
     }
 }
 
-resource "aws_subnet" "aline_public_sub1_my"{
-    vpc_id = aws_vpc.aline_vpc_my.id
+resource "aws_subnet" "aline_public_sub1_my_dev"{
+    vpc_id = aws_vpc.aline_vpc_my_dev.id
     cidr_block = var.public_block1
     availability_zone = var.avail_zone1
     map_public_ip_on_launch = true
     tags = {
-        Name = "aline_public_sub1_my"
+        Name = "aline_public_sub1_my_dev"
         "kubernetes.io/cluster/aline-eks-my" = "owned"
         "kubernetes.io/role/elb" = "1"
     }
-    depends_on = [aws_vpc.aline_vpc_my]
+    depends_on = [aws_vpc.aline_vpc_my_dev]
 }
 
-resource "aws_subnet" "aline_public_sub2_my"{
-    vpc_id = aws_vpc.aline_vpc_my.id
+resource "aws_subnet" "aline_public_sub2_my_dev"{
+    vpc_id = aws_vpc.aline_vpc_my_dev.id
     cidr_block = var.public_block2
     availability_zone = var.avail_zone2
     map_public_ip_on_launch = true
     tags = {
-        Name = "aline_public_sub2_my"
+        Name = "aline_public_sub2_my_dev"
         "kubernetes.io/cluster/aline-eks-my" = "owned"
         "kubernetes.io/role/elb" = "1"
     }
-    depends_on = [aws_vpc.aline_vpc_my]
+    depends_on = [aws_vpc.aline_vpc_my_dev]
 }
 
-resource "aws_route_table_association" "aline_public1_associate_my"{
-    subnet_id = aws_subnet.aline_public_sub1_my.id
-    route_table_id = aws_route_table.aline_route_table_public_my.id
+resource "aws_route_table_association" "aline_public1_associate_my_dev"{
+    subnet_id = aws_subnet.aline_public_sub1_my_dev.id
+    route_table_id = aws_route_table.aline_route_table_public_my_dev.id
 }
 
-resource "aws_route_table_association" "aline_public2_associate_my"{
-    subnet_id = aws_subnet.aline_public_sub2_my.id
-    route_table_id = aws_route_table.aline_route_table_public_my.id
+resource "aws_route_table_association" "aline_public2_associate_my_dev"{
+    subnet_id = aws_subnet.aline_public_sub2_my_dev.id
+    route_table_id = aws_route_table.aline_route_table_public_my_dev.id
 }
 
-resource "aws_eip" "aline_eip_my"{
+resource "aws_eip" "aline_eip_my_dev"{
     vpc = true
     tags = {
-        Name = "aline_eip_my"
+        Name = "aline_eip_my_dev"
     }
-    depends_on = [aws_internet_gateway.aline_igw_my]
+    depends_on = [aws_internet_gateway.aline_igw_my_dev]
 }
 
-resource "aws_nat_gateway" "aline_nat_gw_my"{
-    allocation_id = aws_eip.aline_eip_my.id
-    subnet_id = aws_subnet.aline_public_sub1_my.id
+resource "aws_nat_gateway" "aline_nat_gw_my_dev"{
+    allocation_id = aws_eip.aline_eip_my_dev.id
+    subnet_id = aws_subnet.aline_public_sub1_my_dev.id
     tags = {
-        Name = "aline_nat_gw_my"
+        Name = "aline_nat_gw_my_dev"
     }
 }
 
-resource "aws_route_table" "aline_route_table_private_my"{
-    vpc_id = aws_vpc.aline_vpc_my.id
+resource "aws_route_table" "aline_route_table_private_my_dev"{
+    vpc_id = aws_vpc.aline_vpc_my_dev.id
     route{
         cidr_block = "0.0.0.0/0"
-        nat_gateway_id = aws_nat_gateway.aline_nat_gw_my.id
+        nat_gateway_id = aws_nat_gateway.aline_nat_gw_my_dev.id
     }
     tags = {
-        Name = "aline_route_table_private_my"
+        Name = "aline_route_table_private_my_dev"
     }
 }
 
-resource "aws_subnet" "aline_private_sub1_my"{
-    vpc_id = aws_vpc.aline_vpc_my.id
+resource "aws_subnet" "aline_private_sub1_my_dev"{
+    vpc_id = aws_vpc.aline_vpc_my_dev.id
     cidr_block = var.private_block1
     availability_zone = var.avail_zone1
     map_public_ip_on_launch = false
     tags = {
-        Name = "aline_private_sub1_my"
+        Name = "aline_private_sub1_my_dev"
         "kubernetes.io/cluster/aline-eks-my" = "owned"
         "kubernetes.io/role/internal-elb" = "1"
     }
-    depends_on = [aws_vpc.aline_vpc_my]
+    depends_on = [aws_vpc.aline_vpc_my_dev]
 }
 
-resource "aws_subnet" "aline_private_sub2_my"{
-    vpc_id = aws_vpc.aline_vpc_my.id
+resource "aws_subnet" "aline_private_sub2_my_dev"{
+    vpc_id = aws_vpc.aline_vpc_my_dev.id
     cidr_block = var.private_block2
     availability_zone = var.avail_zone2
     map_public_ip_on_launch = false
     tags = {
-        Name = "aline_private_sub2_my"
+        Name = "aline_private_sub2_my_dev"
         "kubernetes.io/cluster/aline-eks-my" = "owned"
         "kubernetes.io/role/internal-elb" = "1"
     }
-    depends_on = [aws_vpc.aline_vpc_my]
+    depends_on = [aws_vpc.aline_vpc_my_dev]
 }
 
-resource "aws_route_table_association" "aline_private1_associate_my"{
-    subnet_id = aws_subnet.aline_private_sub1_my.id
-    route_table_id = aws_route_table.aline_route_table_private_my.id
+resource "aws_route_table_association" "aline_private1_associate_my_dev"{
+    subnet_id = aws_subnet.aline_private_sub1_my_dev.id
+    route_table_id = aws_route_table.aline_route_table_private_my_dev.id
 }
 
-resource "aws_route_table_association" "aline_private2_associate_my"{
-    subnet_id = aws_subnet.aline_private_sub2_my.id
-    route_table_id = aws_route_table.aline_route_table_private_my.id
+resource "aws_route_table_association" "aline_private2_associate_my_dev"{
+    subnet_id = aws_subnet.aline_private_sub2_my_dev.id
+    route_table_id = aws_route_table.aline_route_table_private_my_dev.id
 }
