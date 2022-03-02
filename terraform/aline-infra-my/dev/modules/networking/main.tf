@@ -1,4 +1,4 @@
-resource "aws_vpc" "aline_vpc_my_dev"{ // add specification for env with params
+resource "aws_vpc" "aline_vpc_my_dev"{
     cidr_block = var.vpc_block
     tags = {
       Name = "aline_vpc_my_dev"
@@ -15,7 +15,7 @@ resource "aws_internet_gateway" "aline_igw_my_dev"{
 resource "aws_security_group" "allow_ssh_http_tls"{
     name = "allow_ssh_http_tls"
     description = "Allow inbound traffic from ssh, http, and TLS"
-    vpc_id = aws_vpc.aline_vpc_my.id
+    vpc_id = aws_vpc.aline_vpc_my_dev.id
     ingress {
         from_port = 22
         to_port = 22
@@ -48,7 +48,7 @@ resource "aws_security_group" "allow_ssh_http_tls"{
 resource "aws_security_group" "aline_subnet_communication_my"{
     name = "allow_subnet_comm"
     description = "Allow public and private subnets communicate with each other"
-    vpc_id = aws_vpc.aline_vpc_my.id
+    vpc_id = aws_vpc.aline_vpc_my_dev.id
     ingress {
         from_port = 0
         to_port = 0
