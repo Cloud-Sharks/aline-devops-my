@@ -3,7 +3,7 @@ version: '3'
 services:
 
   my-bank-ms:
-    image: ${AWS_ID}.dkr.ecr.${ECR_REGION}.amazonaws.com/my-bank-microservice:latest
+    image: ${AWS_ID}.dkr.ecr.us-east-1.amazonaws.com/my-bank-microservice:latest
     container_name: my-bank-ms
     env_file:
       - dev_setup.env
@@ -13,7 +13,7 @@ services:
       - my_aline_nw
 
   my-transaction-ms:
-    image: ${AWS_ID}.dkr.ecr.${ECR_REGION}.amazonaws.com/my-transaction-microservice:latest
+    image: ${AWS_ID}.dkr.ecr.us-east-1.amazonaws.com/my-transaction-microservice:latest
     container_name: my-transaction-ms
     env_file:
       - dev_setup.env
@@ -23,7 +23,7 @@ services:
       - my_aline_nw
 
   my-underwriter-ms:
-    image: ${AWS_ID}.dkr.ecr.${ECR_REGION}.amazonaws.com/my-underwriter-microservice:latest
+    image: ${AWS_ID}.dkr.ecr.us-east-1.amazonaws.com/my-underwriter-microservice:latest
     container_name: my-underwriter-ms
     env_file:
       - dev_setup.env
@@ -33,7 +33,7 @@ services:
       - my_aline_nw
 
   my-user-ms:
-    image: ${AWS_ID}.dkr.ecr.${ECR_REGION}.amazonaws.com/my-user-microservice:latest
+    image: ${AWS_ID}.dkr.ecr.us-east-1.amazonaws.com/my-user-microservice:latest
     container_name: my-user-ms
     env_file:
       - dev_setup.env
@@ -45,3 +45,18 @@ services:
 networks:
   my_aline_nw:
     name: my-aline
+
+x-aws-cloudformation:
+  Resources:
+    MybankmsService:
+      Properties:
+        ServiceName: bank-service-my
+    MytransactionmsService:
+      Properties:
+        ServiceName: transaction-service-my
+    MyunderwritermsService:
+      Properties:
+        ServiceName: underwriter-service-my
+    MyusermsService:
+      Properties:
+        ServiceName: user-service-my
