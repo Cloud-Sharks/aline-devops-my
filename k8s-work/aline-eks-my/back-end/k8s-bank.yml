@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
         - name: bank-ms-my
-          image: 862167864120.dkr.ecr.us-east-1.amazonaws.com/my-bank-microservice:v1.0
+          image: ${AWS_ID}.dkr.ecr.us-east-1.amazonaws.com/my-bank-microservice:v1.0
           ports:
             - containerPort: 8083
           envFrom:
