@@ -10,6 +10,9 @@ spec:
   replicas: 2
   strategy:
     type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 50%
+      maxSurge: 50%
   selector:
     matchLabels:
       app: user-ms-my
@@ -20,7 +23,7 @@ spec:
     spec:
       containers:
         - name: user-ms-my
-          image: ${AWS_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/my-user-microservice:v1.0
+          image: 862167864120.dkr.ecr.us-east-1.amazonaws.com/my-user-microservice:v1.0
           ports:
             - containerPort: 8070
           envFrom:
@@ -39,6 +42,7 @@ metadata:
   labels:
     app: user-ms-my
 spec:
+  type: NodePort
   selector:
     app: user-ms-my
   ports:

@@ -5,11 +5,13 @@ metadata:
   namespace: aline-fargate-ns-my
   labels:
     app: bank-ms-my
-
 spec:
   replicas: 2
   strategy:
     type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 50%
+      maxSurge: 50%
   selector:
     matchLabels:
       app: bank-ms-my
@@ -20,7 +22,7 @@ spec:
     spec:
       containers:
         - name: bank-ms-my
-          image: ${AWS_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/my-bank-microservice:v1.0
+          image: 862167864120.dkr.ecr.us-east-1.amazonaws.com/my-bank-microservice:v1.0
           ports:
             - containerPort: 8083
           envFrom:
@@ -39,6 +41,7 @@ metadata:
   labels:
     app: bank-ms-my
 spec:
+  type: NodePort
   selector:
     app: bank-ms-my
   ports:

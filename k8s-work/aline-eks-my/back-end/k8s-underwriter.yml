@@ -7,9 +7,12 @@ metadata:
     app: underwriter-ms-my
 
 spec:
-  replicas: 
+  replicas: 2
   strategy:
     type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 50%
+      maxSurge: 50%
   selector:
     matchLabels:
       app: underwriter-ms-my
@@ -20,7 +23,7 @@ spec:
     spec:
       containers:
         - name: underwriter-ms-my
-          image: ${AWS_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/my-underwriter-microservice:v1.0
+          image: 862167864120.dkr.ecr.us-east-1.amazonaws.com/my-underwriter-microservice:v1.0
           ports:
             - containerPort: 8071
           envFrom:
@@ -39,6 +42,7 @@ metadata:
   labels:
     app: underwriter-ms-my
 spec:
+  type: NodePort
   selector:
     app: underwriter-ms-my
   ports:

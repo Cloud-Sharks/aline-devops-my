@@ -6,6 +6,10 @@ target/
 !**/src/test/resources/
 *.env
 *config.yml
+*config.json
+*.hcl
+.terraform/
+*.cmd
 
 ### STS ###
 .apt_generated
