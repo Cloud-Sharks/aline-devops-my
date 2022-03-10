@@ -181,3 +181,71 @@ resource "aws_route_table_association" "aline_private2_associate_my_dev"{
     subnet_id = aws_subnet.aline_private_sub2_my_dev.id
     route_table_id = aws_route_table.aline_route_table_private_my_dev.id
 }
+
+// establish peering connection
+resource "aws_vpc_peering_connection" "aline_peering_my_dev"{
+    peer_vpc_id = var.db_vpc_id
+    vpc_id = aws_vpc.aline_vpc_my_dev.id
+    auto_accept = true
+}
+
+// Store necessary info for EKS cluster as secrets
+resource "aws_secretsmanager_secret" "vpc_my_dev"{
+    name = "vpc_my_dev"
+    force_overwrite_replica_secret = true
+    depends_on = [aws_vpc.aline_vpc_my_dev]
+}
+
+resource "aws_secretsmanager_secret_version" "vpc_my_dev"{
+    secret_id = aws_secretsmanager_secret.vpc_my_dev.id
+    secret_string = aws_vpc.aline_vpc_my_dev.id
+    depends_on = [aws_secretsmanager_secret.vpc_my_dev]
+}
+
+resource "aws_secretsmanager_secret" "public1_my_dev"{
+    name = "public1_my_dev"
+    force_overwrite_replica_secret = true
+    depends_on = [aws_subnet.aline_public_sub1_my_dev]
+}
+
+resource "aws_secretsmanager_secret_version" "public1_my_dev"{
+    secret_id = aws_secretsmanager_secret.public1_my_dev.id
+    secret_string = aws_subnet.aline_public_sub1_my_dev.id
+    depends_on = [aws_secretsmanager_secret.public1_my_dev]
+}
+
+resource "aws_secretsmanager_secret" "public2_my_dev"{
+    name = "public2_my_dev"
+    force_overwrite_replica_secret = true
+    depends_on = [aws_subnet.aline_public_sub2_my_dev]
+}
+
+resource "aws_secretsmanager_secret_version" "public2_my_dev"{
+    secret_id = aws_secretsmanager_secret.public2_my_dev.id
+    secret_string = aws_subnet.aline_public_sub2_my_dev.id
+    depends_on = [aws_secretsmanager_secret.public2_my_dev]
+}
+
+resource "aws_secretsmanager_secret" "private1_my_dev"{
+    name = "private1_my_dev"
+    force_overwrite_replica_secret = true
+    depends_on = [aws_subnet.aline_private_sub1_my_dev]
+}
+
+resource "aws_secretsmanager_secret_version" "private1_my_dev"{
+    secret_id = aws_secretsmanager_secret.private1_my_dev.id
+    secret_string = aws_subnet.aline_private_sub1_my_dev.id
+    depends_on = [aws_secretsmanager_secret.private1_my_dev]
+}
+
+resource "aws_secretsmanager_secret" "private2_my_dev"{
+    name = "private2_my_dev"
+    force_overwrite_replica_secret = true
+    depends_on = [aws_subnet.aline_private_sub2_my_dev]
+}
+
+resource "aws_secretsmanager_secret_version" "private2_my_dev"{
+    secret_id = aws_secretsmanager_secret.private2_my_dev.id
+    secret_string = aws_subnet.aline_private_sub2_my_dev.id
+    depends_on = [aws_secretsmanager_secret.private2_my_dev]
+}

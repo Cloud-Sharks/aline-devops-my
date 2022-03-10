@@ -7,4 +7,5 @@ module "networking"{
     private_block1 = var.private_block1
     public_block2 = var.public_block2
     private_block2 = var.private_block2
+    db_vpc_id = var.db_vpc_id
 }
