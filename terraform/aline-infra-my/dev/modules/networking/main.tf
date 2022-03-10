@@ -193,6 +193,7 @@ resource "aws_vpc_peering_connection" "aline_peering_my_dev"{
 resource "aws_secretsmanager_secret" "vpc_my_dev"{
     name = "vpc_my_dev"
     force_overwrite_replica_secret = true
+    recovery_window_in_days = 0
     depends_on = [aws_vpc.aline_vpc_my_dev]
 }
 
@@ -205,6 +206,7 @@ resource "aws_secretsmanager_secret_version" "vpc_my_dev"{
 resource "aws_secretsmanager_secret" "public1_my_dev"{
     name = "public1_my_dev"
     force_overwrite_replica_secret = true
+    recovery_window_in_days = 0
     depends_on = [aws_subnet.aline_public_sub1_my_dev]
 }
 
@@ -217,6 +219,7 @@ resource "aws_secretsmanager_secret_version" "public1_my_dev"{
 resource "aws_secretsmanager_secret" "public2_my_dev"{
     name = "public2_my_dev"
     force_overwrite_replica_secret = true
+    recovery_window_in_days = 0
     depends_on = [aws_subnet.aline_public_sub2_my_dev]
 }
 
@@ -229,6 +232,7 @@ resource "aws_secretsmanager_secret_version" "public2_my_dev"{
 resource "aws_secretsmanager_secret" "private1_my_dev"{
     name = "private1_my_dev"
     force_overwrite_replica_secret = true
+    recovery_window_in_days = 0
     depends_on = [aws_subnet.aline_private_sub1_my_dev]
 }
 
@@ -241,6 +245,7 @@ resource "aws_secretsmanager_secret_version" "private1_my_dev"{
 resource "aws_secretsmanager_secret" "private2_my_dev"{
     name = "private2_my_dev"
     force_overwrite_replica_secret = true
+    recovery_window_in_days = 0
     depends_on = [aws_subnet.aline_private_sub2_my_dev]
 }
 
