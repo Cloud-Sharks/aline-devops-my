@@ -32,3 +32,8 @@ variable "private_block2"{
     type = string
     description = "CIDR block for private subnet 2"
 }
+
+variable "db_vpc_id"{
+    type = string
+    description = "ID of the subnet with the remote database"
+}

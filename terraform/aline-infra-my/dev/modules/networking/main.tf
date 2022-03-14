@@ -34,6 +34,12 @@ resource "aws_security_group" "allow_ssh_http_tls"{
         protocol = "tcp"
         cidr_blocks = ["0.0.0.0/0"]
     }
+    ingress {
+        from_port = 9443
+        to_port = 9443
+        protocol = "tcp"
+        cidr_blocks = ["0.0.0.0/0"]
+    }
     egress {
         from_port = 0
         to_port = 0
@@ -180,4 +186,33 @@ resource "aws_route_table_association" "aline_private1_associate_my_dev"{
 resource "aws_route_table_association" "aline_private2_associate_my_dev"{
     subnet_id = aws_subnet.aline_private_sub2_my_dev.id
     route_table_id = aws_route_table.aline_route_table_private_my_dev.id
+}
+
+// establish peering connection
+resource "aws_vpc_peering_connection" "aline_peering_my_dev"{
+    peer_vpc_id = var.db_vpc_id
+    vpc_id = aws_vpc.aline_vpc_my_dev.id
+    auto_accept = true
+}
+
+// Store necessary info for EKS cluster as secrets
+resource "aws_secretsmanager_secret" "aline_vpc_secrets_my_dev"{
+    name = "aline_vpc_secrets_my_dev"
+    force_overwrite_replica_secret = true
+    recovery_window_in_days = 0
+}
+
+locals{
+    vpc_secrets = {
+        vpc_id = aws_vpc.aline_vpc_my_dev.id
+        public1_id = aws_subnet.aline_public_sub1_my_dev.id
+        public2_id = aws_subnet.aline_public_sub2_my_dev.id
+        private1_id = aws_subnet.aline_private_sub1_my_dev.id
+        private2_id = aws_subnet.aline_private_sub2_my_dev.id
+    }
+}
+
+resource "aws_secretsmanager_secret_version" "aline_vpc_secrets_my_dev"{
+    secret_id = aws_secretsmanager_secret.aline_vpc_secrets_my_dev.id
+    secret_string = jsonencode(local.vpc_secrets)
 }
