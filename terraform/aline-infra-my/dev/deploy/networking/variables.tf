@@ -37,3 +37,18 @@ variable "db_vpc_id"{
     type = string
     description = "ID of the subnet with the remote database"
 }
+
+variable "s3_bucket"{
+    type = string
+    description = "S3 bucket of the project"
+}
+
+variable "s3_key"{
+    type = string
+    description = "S3 key of the project"
+}
+
+variable "aws_region"{
+    type = string
+    description = "AWS Region of the project"
+}

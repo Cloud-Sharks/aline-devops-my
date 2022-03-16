@@ -1,0 +1,36 @@
+pipeline{
+
+    agent any
+
+    environment{
+        TERRAFORM_FOLDER = 'https://github.com/Cloud-Sharks/aline-devops-my/branches/dev/terraform/aline-infra-my/'
+        // TERRAFORM_FOLDER = '${FIRST_HALF}${BRANCH}${SECOND_HALF}'
+    }
+
+    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "cloudshark-Mark", accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]){
+        stages{
+            stage('Preparation'){
+                steps{
+                    sh'svn export ${TERRAFORM_FOLDER}'
+                    sh'cd aline-infra-my/${BRANCH}/deploy/${INFRASTRUCTURE}'
+                }
+            }
+            stage('Terraform Init'){
+                steps{
+                    sh'terraform init' 
+                }
+            }
+            stage('Terraform Plan'){
+                steps{
+                    sh'terraform plan'
+                }
+            }
+            stage('Terraform Apply'){
+                steps{
+                    sh'terraform apply --auto-approve'
+                }
+            }
+        }
+    }
+
+}
