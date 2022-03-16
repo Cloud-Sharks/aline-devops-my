@@ -9,6 +9,7 @@ target/
 *config.json
 *.hcl
 .terraform/
+*.tfvars
 *.cmd
 *.ps1
 
