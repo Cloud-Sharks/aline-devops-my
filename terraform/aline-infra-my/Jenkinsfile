@@ -3,34 +3,28 @@ pipeline{
     agent any
 
     environment{
-        TERRAFORM_FOLDER = 'https://github.com/Cloud-Sharks/aline-devops-my/branches/dev/terraform/aline-infra-my/'
-        // TERRAFORM_FOLDER = '${FIRST_HALF}${BRANCH}${SECOND_HALF}'
+        //set sensitive information of tfvars file and AWS Credentials
+        TERRAFORM_VARS = credentials('TF_VARS_MY')
+        AWS_CREDENTIALS = credentials('cloudshark-Mark')
     }
-
-    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "cloudshark-Mark", accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]){
-        stages{
-            stage('Preparation'){
-                steps{
-                    sh'svn export ${TERRAFORM_FOLDER}'
-                    sh'cd aline-infra-my/${BRANCH}/deploy/${INFRASTRUCTURE}'
-                }
+    stages{
+        stage('Terraform Init'){
+            steps{
+                //initialize terraform configuration
+                sh'terraform -chdir=${TF_WORKDIR_MY} init'
             }
-            stage('Terraform Init'){
-                steps{
-                    sh'terraform init' 
-                }
+        }
+        stage('Terraform Validate'){
+            steps{
+                //verify terraform file is correctly formatted
+                sh'terraform -chdir=${TF_WORKDIR_MY} validate -var-file ${TERRAFORM_VARS} -json'
             }
-            stage('Terraform Plan'){
-                steps{
-                    sh'terraform plan'
-                }
-            }
-            stage('Terraform Apply'){
-                steps{
-                    sh'terraform apply --auto-approve'
-                }
+        }
+        stage('Terraform Apply'){
+            steps{
+                //provision infrastructure with automatic approval
+                sh'terraform -chdir=${TF_WORKDIR_MY} apply -var-file ${TERRAFORM_VARS} --auto-approve'
             }
         }
     }
-
 }

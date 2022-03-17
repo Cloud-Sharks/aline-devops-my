@@ -8,13 +8,13 @@ terraform {
 }
 
 provider "aws" {
-  region = var.aws_region
+  region = "us-west-1"
 }
 
 terraform {
   backend "s3" {
-    bucket = var.s3_bucket
-    key = var.s3_key
-    region = var.aws_region
+    bucket = "aline-terraform-my"
+    key = "networking.tfstate"
+    region = "us-west-1"
   }
 }
