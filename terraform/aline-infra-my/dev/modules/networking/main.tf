@@ -12,33 +12,18 @@ resource "aws_internet_gateway" "aline_igw_my_dev"{
     }
 }
 
-resource "aws_security_group" "allow_ssh_http_tls"{
-    name = "allow_ssh_http_tls"
-    description = "Allow inbound traffic from ssh, http, and TLS"
+resource "aws_security_group" "aline_external_communication_my"{
+    name = "aline_external_communication_my"
+    description = "Allow approved inbound traffic"
     vpc_id = aws_vpc.aline_vpc_my_dev.id
-    ingress {
-        from_port = 22
-        to_port = 22
-        protocol = "tcp"
-        cidr_blocks = ["0.0.0.0/0"]
-    }
-    ingress {
-        from_port = 80
-        to_port = 80
-        protocol = "tcp"
-        cidr_blocks = ["0.0.0.0/0"]
-    }
-    ingress {
-        from_port = 443
-        to_port = 443
-        protocol = "tcp"
-        cidr_blocks = ["0.0.0.0/0"]
-    }
-    ingress {
-        from_port = 9443
-        to_port = 9443
-        protocol = "tcp"
-        cidr_blocks = ["0.0.0.0/0"]
+    dynamic "ingress" {
+        for_each = var.external_ingress_rules
+        content{
+            from_port = ingress.value.from_port
+            to_port = ingress.value.to_port
+            protocol = ingress.value.protocol
+            cidr_blocks = ["0.0.0.0/0"]
+        }
     }
     egress {
         from_port = 0
@@ -47,25 +32,19 @@ resource "aws_security_group" "allow_ssh_http_tls"{
         cidr_blocks = ["0.0.0.0/0"]
     }
     tags = {
-        Name = "allow_ssh_http_tls"
+        Name = "aline_external_communication_my"
     }
 }
 
-resource "aws_security_group" "aline_subnet_communication_my"{
-    name = "allow_subnet_comm"
+resource "aws_security_group" "aline_internal_communication_my"{
+    name = "aline_internal_communication_my"
     description = "Allow public and private subnets communicate with each other"
     vpc_id = aws_vpc.aline_vpc_my_dev.id
     ingress {
         from_port = 0
         to_port = 0
         protocol = "-1"
-        cidr_blocks = [var.public_block1, var.public_block2]
-    }
-    ingress {
-        from_port = 0
-        to_port = 0
-        protocol = "-1"
-        cidr_blocks = [var.private_block1, var.private_block2]
+        cidr_blocks = [var.public_block1, var.public_block2, var.private_block1, var.private_block2]
     }
     egress {
         from_port = 0
@@ -74,7 +53,7 @@ resource "aws_security_group" "aline_subnet_communication_my"{
         cidr_blocks = ["0.0.0.0/0"]
     }
     tags = {
-        Name = "allow_subnet_comm"
+        Name = "aline_internal_communication_my"
     }
 }
 
