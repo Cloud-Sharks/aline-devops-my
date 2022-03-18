@@ -17,7 +17,7 @@ pipeline{
         stage('Terraform Validate'){
             steps{
                 //verify terraform file is correctly formatted
-                sh'terraform -chdir=${TF_WORKDIR_MY} validate -var-file ${TERRAFORM_VARS} -json'
+                sh'terraform -chdir=${TF_WORKDIR_MY} validate -json'
             }
         }
         stage('Terraform Apply'){

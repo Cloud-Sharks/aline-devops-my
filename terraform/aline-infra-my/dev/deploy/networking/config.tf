@@ -14,7 +14,7 @@ provider "aws" {
 terraform {
   backend "s3" {
     bucket = "aline-terraform-my"
-    key = "networking.tfstate"
+    key = "networking-dev.tfstate"
     region = "us-west-1"
   }
 }
