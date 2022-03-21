@@ -1,0 +1,30 @@
+pipeline{
+
+    agent any
+
+    environment{
+        //set sensitive information of tfvars file and AWS Credentials
+        TERRAFORM_VARS = credentials('TF_VARS_MY')
+        AWS_CREDENTIALS = credentials('cloudshark-Mark')
+    }
+    stages{
+        stage('Terraform Init'){
+            steps{
+                //initialize terraform configuration
+                sh'terraform -chdir=${TF_WORKDIR_MY} init'
+            }
+        }
+        stage('Terraform Validate'){
+            steps{
+                //verify terraform file is correctly formatted
+                sh'terraform -chdir=${TF_WORKDIR_MY} validate -json'
+            }
+        }
+        stage('Terraform Apply'){
+            steps{
+                //provision infrastructure with automatic approval
+                sh'terraform -chdir=${TF_WORKDIR_MY} apply -var-file ${TERRAFORM_VARS} --auto-approve'
+            }
+        }
+    }
+}

@@ -1,7 +1,0 @@
-vpc_block = "172.3.0.0/16"
-avail_zone1 = "us-west-1a"
-avail_zone2 = "us-west-1c"
-public_block1 = "172.3.1.0/24"
-public_block2 = "172.3.2.0/24"
-private_block1 = "172.3.3.0/24"
-private_block2 = "172.3.4.0/24"

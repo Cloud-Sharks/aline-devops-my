@@ -3,6 +3,11 @@ variable "vpc_block"{
     description = "CIDR block for VPC"
 }
 
+variable "external_ingress_rules"{
+    type = map
+    description = "Ingress rules for external communication"
+}
+
 variable "avail_zone1"{
     type = string
     description = "First availability zone"
