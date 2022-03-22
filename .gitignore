@@ -11,6 +11,7 @@ target/
 .terraform/
 *.cmd
 *.ps1
+ssh_keys/
 
 ### STS ###
 .apt_generated
