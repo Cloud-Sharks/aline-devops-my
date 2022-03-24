@@ -1,11 +1,6 @@
-- hosts: aws1
-  remote_user: root
+- hosts: aws-jenkins
   become: true
   tasks:
-    - name: Install Apache
-      yum: name=httpd state=present
-    - name: Start Apache
-      service: name=httpd state=started
     - name: Download Jenkins Release
       get_url:
         url: https://pkg.jenkins.io/redhat-stable/jenkins.repo
@@ -20,7 +15,7 @@
         state: latest
     - name: Install Java
       yum:
-        name: java-11-openjdk-devel
+        name: java-1.8.0-openjdk
         state: present
     - name: Install Jenkins
       yum:
@@ -33,12 +28,3 @@
       ansible.builtin.systemd:
         name: jenkins
         state: started
-# - hosts: localhost
-#   tasks: 
-#     - name: Provision Infrastructure
-#       shell: |
-#         # terraform commands
-#     - name: Create Cluster
-#       shell: |
-#         # eks setup commands
-

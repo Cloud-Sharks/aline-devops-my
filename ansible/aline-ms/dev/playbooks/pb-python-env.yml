@@ -1,0 +1,15 @@
+- hosts: py-hosts
+  become: true
+  tasks:
+    - name: Install Python
+      package: 
+        name: python
+        state: latest
+    - name: Install wget
+      package:
+        name: wget
+        state: latest
+    - name: Install Git
+      package:
+        name: git
+        state: latest
