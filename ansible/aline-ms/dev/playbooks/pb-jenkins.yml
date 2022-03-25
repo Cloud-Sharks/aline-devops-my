@@ -1,4 +1,5 @@
-- hosts: aws-jenkins
+- name: Set Up a Jenkins Service Host
+  hosts: aws-jenkins
   become: true
   tasks:
     - name: Download Jenkins Release

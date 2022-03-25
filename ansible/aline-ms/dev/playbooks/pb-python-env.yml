@@ -1,4 +1,5 @@
-- hosts: py-hosts
+- name: Create Python Developer Environment
+  hosts: py-hosts
   become: true
   tasks:
     - name: Install Python

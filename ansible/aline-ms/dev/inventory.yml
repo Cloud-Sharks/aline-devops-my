@@ -1,0 +1,30 @@
+all:
+  hosts:
+    py1:
+      ansible_host: ec2-54-193-123-52.us-west-1.compute.amazonaws.com
+      ansible_user: ec2_user
+      ansible_ssh_private_key: ssh_keys/cs-mark-temp.pem
+    # py-hosts:
+    #   # sample
+    #   py1:
+    #     ansible_host: ec2-54-193-123-52.us-west-1.compute.amazonaws.com
+    #     ansible_user: ec2_user
+    #     ansible_ssh_private_key: ssh_keys/cs-mark-temp.pem
+    # java-hosts:
+    #   # sample
+    #   java1:
+    #     ansible_host: ec2-54-193-123-52.us-west-1.compute.amazonaws.com
+    #     ansible_user: ec2_user
+    #     ansible_ssh_private_key: ssh_keys/cs-mark-temp.pem
+    # mysql-hosts:
+    #   # sample
+    #   mysql1:
+    #     ansible_host: ec2-54-193-123-52.us-west-1.compute.amazonaws.com
+    #     ansible_user: ec2_user
+    #     ansible_ssh_private_key: ssh_keys/cs-mark-temp.pem
+    # mongodb-hosts:
+    #   # sample
+    #   mongo1:
+    #     ansible_host: ec2-54-193-123-52.us-west-1.compute.amazonaws.com
+    #     ansible_user: ec2_user
+    #     ansible_ssh_private_key: ssh_keys/cs-mark-temp.pem
