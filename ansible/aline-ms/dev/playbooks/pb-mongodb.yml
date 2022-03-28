@@ -7,19 +7,23 @@
         keyserver: hkp://keyserver.ubuntu.com
         id: 7F0CEB10
         state: present
+
     - name: Add MongoDB Repository
       apt_repository: 
         repo: 'deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen'
         state: present
+
     - name: Install MongoDB
       package:
         name: mongodb-org
         state: present
         update_cache: yes
+
     - name: Start MongoDB
       service:
         name: mongodb
         state: started
+        
     - name: Create MongoDB user
       mongodb_user:
         login_port: '27017'

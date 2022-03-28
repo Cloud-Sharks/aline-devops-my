@@ -4,7 +4,7 @@
   tasks:
     - name: Install Java
       package:
-        name: java-1.8.0-openjdk
+        name: "{{ java_ver }}"
         state: present
         
     - name: Download Jenkins Release for RedHat Systems
@@ -33,18 +33,22 @@
       package:
         name: '*'
         state: latest
+
     - name: Install Jenkins
       package:
         name: jenkins
         state: latest
+
     - name: Reload Daemon
       ansible.builtin.systemd:
         daemon_reload: yes
+
     - name: Start Jenkins
       service:
         name: jenkins
         enabled: true
         state: started
+        
     - name: Get Jenkins key
       shell: 'cat /var/lib/jenkins/secrets/initialAdminPassword'
       register: key_out
