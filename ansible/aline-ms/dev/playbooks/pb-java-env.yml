@@ -1,0 +1,23 @@
+- name: Create Java Developer Environment
+  hosts: java_hosts
+  become: true
+  tasks:
+    - name: Install Java
+      package: 
+        name: "{{ java_ver }}"
+        state: latest
+
+    - name: Install Maven
+      package:
+        name: maven
+        state: latest
+
+    - name: Install wget
+      package:
+        name: wget
+        state: latest
+        
+    - name: Install Git
+      package:
+        name: git
+        state: latest

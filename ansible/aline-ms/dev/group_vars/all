@@ -1,0 +1,4 @@
+db_user: user
+db_pass: pass
+db_name: testDB
+java_ver: openjdk-11-jdk

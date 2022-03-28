@@ -1,0 +1,23 @@
+java_hosts:
+  hosts:
+    java1:
+      ansible_host: x.x.x.x
+      ansible_user: temp
+
+py_hosts:
+  hosts:
+   python1:
+      ansible_host: x.x.x.x
+      ansible_user: temp
+
+mysql_hosts:
+  hosts:
+    mysql1:
+      ansible_host: x.x.x.x
+      ansible_user: temp
+
+jenkins_hosts:
+  hosts:
+    jenkins1:
+      ansible_host: x.x.x.x
+      ansible_user: temp

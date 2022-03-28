@@ -12,6 +12,7 @@ target/
 *.tfvars
 *.cmd
 *.ps1
+ssh_keys/
 
 ### STS ###
 .apt_generated

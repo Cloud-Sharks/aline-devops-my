@@ -1,0 +1,21 @@
+- hosts: webserver
+  tasks:
+    - name: Install Apache
+      yum:
+        name: httpd
+        state: present
+    - name: Start Apache
+      service:
+        name: http
+        state: started
+    - name: Create html file
+      file:
+        path: "/var/www/html/index.html"
+        state: touch
+    - name: Populate html file
+      blockinfile:
+        dest: /var/www/html/index.html
+        block: |
+          <html>
+          <h1> Hello World
+          </html>

@@ -1,0 +1,9 @@
+- name: Update installed packages
+  hosts: all
+  become: true
+  tasks:
+    - name: Update installed packages
+      package:
+        name: '*'
+        state: latest
+      
