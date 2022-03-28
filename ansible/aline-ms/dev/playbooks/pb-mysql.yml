@@ -1,5 +1,5 @@
 - name: Set-up and Start MySQL Database
-  hosts: mysql-hosts
+  hosts: mysql_hosts
   become: true
   tasks:
     - name: Install MySQL and Dependencies

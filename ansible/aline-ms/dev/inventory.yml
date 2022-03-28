@@ -1,30 +1,29 @@
-all:
+java_hosts:
   hosts:
-    py1:
-      ansible_host: ec2-54-193-123-52.us-west-1.compute.amazonaws.com
-      ansible_user: ec2_user
-      ansible_ssh_private_key: ssh_keys/cs-mark-temp.pem
-    # py-hosts:
-    #   # sample
-    #   py1:
-    #     ansible_host: ec2-54-193-123-52.us-west-1.compute.amazonaws.com
-    #     ansible_user: ec2_user
-    #     ansible_ssh_private_key: ssh_keys/cs-mark-temp.pem
-    # java-hosts:
-    #   # sample
-    #   java1:
-    #     ansible_host: ec2-54-193-123-52.us-west-1.compute.amazonaws.com
-    #     ansible_user: ec2_user
-    #     ansible_ssh_private_key: ssh_keys/cs-mark-temp.pem
-    # mysql-hosts:
-    #   # sample
-    #   mysql1:
-    #     ansible_host: ec2-54-193-123-52.us-west-1.compute.amazonaws.com
-    #     ansible_user: ec2_user
-    #     ansible_ssh_private_key: ssh_keys/cs-mark-temp.pem
-    # mongodb-hosts:
-    #   # sample
-    #   mongo1:
-    #     ansible_host: ec2-54-193-123-52.us-west-1.compute.amazonaws.com
-    #     ansible_user: ec2_user
-    #     ansible_ssh_private_key: ssh_keys/cs-mark-temp.pem
+    java1:
+      ansible_host: x.x.x.x
+      ansible_user: temp
+
+py_hosts:
+  hosts:
+   python1:
+      ansible_host: x.x.x.x
+      ansible_user: temp
+
+mysql_hosts:
+  hosts:
+    mysql1:
+      ansible_host: x.x.x.x
+      ansible_user: temp
+
+jenkins_hosts:
+  hosts:
+    jenkins1:
+      ansible_host: x.x.x.x
+      ansible_user: temp
+
+mongodb_hosts:
+  hosts:
+    mongodb1:
+      ansible_host: x.x.x.x
+      ansible_user: temp

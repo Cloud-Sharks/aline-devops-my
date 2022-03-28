@@ -1,5 +1,5 @@
 - name: Create Java Developer Environment
-  hosts: java-hosts
+  hosts: java_hosts
   become: true
   tasks:
     - name: Install Java

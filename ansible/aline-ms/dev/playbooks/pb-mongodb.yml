@@ -1,5 +1,5 @@
 - name: Set-up and Start MongoDB Database
-  hosts: mongodb-hosts
+  hosts: mongodb_hosts
   become: true
   tasks:
     - name: Import MongoDB public key

@@ -1,10 +1,10 @@
 - name: Create Python Developer Environment
-  hosts: py-hosts
+  hosts: py_hosts
   become: true
   tasks:
     - name: Install Python
       package: 
-        name: python
+        name: python3
         state: latest
     - name: Install wget
       package:
