@@ -22,7 +22,7 @@ pipeline{
         }
         stage('Terraform Plan'){
             steps{
-                //provision infrastructure with automatic approval
+                //run terraform plan
                 sh'terraform -chdir=${TF_WORKDIR_MY} plan -var-file ${TERRAFORM_VARS}'
             }
         }
