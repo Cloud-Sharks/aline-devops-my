@@ -20,6 +20,12 @@ pipeline{
                 sh'terraform -chdir=${TF_WORKDIR_MY} validate -json'
             }
         }
+        stage('Terraform Plan'){
+            steps{
+                //provision infrastructure with automatic approval
+                sh'terraform -chdir=${TF_WORKDIR_MY} plan -var-file ${TERRAFORM_VARS}'
+            }
+        }
         stage('Terraform Apply'){
             steps{
                 //provision infrastructure with automatic approval
