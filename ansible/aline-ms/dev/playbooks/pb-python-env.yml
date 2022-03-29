@@ -7,6 +7,11 @@
         name: python3
         state: latest
 
+    - name: Install pip
+      package:
+        name: python-pip
+        state: latest
+
     - name: Install wget
       package:
         name: wget

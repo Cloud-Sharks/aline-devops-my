@@ -2,11 +2,11 @@
   hosts: jenkins_hosts
   become: true
   tasks:
-    - name: Install Java
-      package:
-        name: "{{ java_ver }}"
-        state: present
-        
+    - name: Install Java for RedHat Systems
+      apt:
+        name: java-1.8.0-openjdk
+        state: latest
+      when: ansible_os_family == "Redhat"
     - name: Download Jenkins Release for RedHat Systems
       get_url:
         url: https://pkg.jenkins.io/redhat-stable/jenkins.repo
@@ -18,6 +18,15 @@
         state: present
       when: ansible_os_family == "Redhat"
     
+    - name: Install Java Repo for Debian Systems
+      apt_repository:
+        repo: ppa:openjdk-r/ppa
+        state: present
+      when: ansible_os_family == "Debian"
+    - name: Install Java for Debian Systems
+      apt:
+        name: openjdk-8-jdk
+        state: latest
     - name: Import Jenkins Key for Debian Systems
       apt_key:
         url: https://pkg.jenkins.io/debian-stable/jenkins.io.key
@@ -28,11 +37,6 @@
         repo: https://pkg.jenkins.io/debian-stable binary/
         state: present
       when: ansible_os_family == "Debian"
-
-    - name: Update Package Installer
-      package:
-        name: '*'
-        state: latest
 
     - name: Install Jenkins
       package:
