@@ -2,6 +2,7 @@ AWSTemplateFormatVersion: 2010-09-09
 
 Description: This template deploys a VPC with 4 subnets (2 public and 2 private) spread between 2 availability zones with a peering connection. It also deploys an internet gateway, 2 NAT gateways, and route tables and routes to facilitate communication.
 
+# Define necessary variables. Customizable
 Parameters:
   vpccidr:
     Description: The CIDR block for the vpc
@@ -35,7 +36,9 @@ Parameters:
     Description: The tag including the environment this template is provisioning
     Type: String
 
+# Provision necessary resources
 Resources:
+  # VPC and connectivity
   VPC:
     Type: AWS::EC2::VPC
     Properties:
@@ -56,7 +59,68 @@ Resources:
     Properties:
       InternetGatewayId: !Ref InternetGateway
       VpcId: !Ref VPC
-  
+  ExternalSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow approved external communication
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: icmp
+          FromPort: 8
+          ToPort: 0
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          FromPort: 0
+          ToPort: 0
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: !Sub ${environmenttag} External Communication SG
+  InternalSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow internal communication
+      VpcID: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: -1
+          FromPort: 0
+          ToPort: 0
+          CidrIp: !Ref public1cidr
+        - IpProtocol: -1
+          FromPort: 0
+          ToPort: 0
+          CidrIp: !Ref private1cidr
+        - IpProtocol: -1
+          FromPort: 0
+          ToPort: 0
+          CidrIp: !Ref public2cidr
+        - IpProtocol: -1
+          FromPort: 0
+          ToPort: 0
+          CidrIp: !Ref private2cidr
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          FromPort: 0
+          ToPort: 0
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: !Sub ${environmenttag} Internal Communication SG
+
+  # Subnets and NAT Gateway for AZ1
   PublicSubnet1:
     Type: AWS::EC2::Subnet
     Properties:
@@ -91,6 +155,7 @@ Resources:
         - Key: Name
           Value: !Sub ${environmenttag} NAT Gateway 1
   
+  # Subnets and NAT Gateway for AZ2
   PublicSubnet2:
     Type: AWS::EC2::Subnet
     Properties:
@@ -125,6 +190,7 @@ Resources:
         - Key: Name
           Value: !Sub ${environmenttag} NAT Gateway 2
 
+  # Public Routing
   PublicRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
@@ -150,6 +216,7 @@ Resources:
       RouteTableId: !Ref PublicRouteTable
       SubnetId: !Ref PublicSubnet2
 
+  # Private Routing
   PrivateRouteTable1:
     Type: AWS::EC2::RouteTable
     Properties:
@@ -187,6 +254,7 @@ Resources:
       RouteTableId: !Ref PrivateRouteTable2
       SubnetId: !Ref PrivateSubnet2
 
+  # Peering Connection and Routes
   PeeringConnection:
     Type: AWS::EC2::VPCPeeringConnection
     Properties:
@@ -208,6 +276,7 @@ Resources:
       DestinationCidrBlock: !Ref dbvpccidr
       VpcPeeringConnectionId: !Ref PeeringConnection
 
+  # Store IDs as Systems Manager Parameters
   VPCParam:
     Type: AWS::SSM::Parameter
     Properties:
