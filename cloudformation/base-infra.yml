@@ -1,0 +1,250 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: This template deploys a VPC with 4 subnets (2 public and 2 private) spread between 2 availability zones with a peering connection. It also deploys an internet gateway, 2 NAT gateways, and route tables and routes to facilitate communication.
+
+Parameters:
+  vpccidr:
+    Description: The CIDR block for the vpc
+    Type: String
+    Default: 172.3.0.0/16
+  public1cidr:
+    Description: The CIDR block for the first public subnet
+    Type: String
+    Default: 172.3.1.0/24
+  private1cidr:
+    Description: The CIDR block for the first private subnet
+    Type: String
+    Default: 172.3.2.0/24
+  public2cidr:
+    Description: The CIDR block for the second public subnet
+    Type: String
+    Default: 172.3.3.0/24
+  private2cidr:
+    Description: The CIDR block for the second private subnet
+    Type: String
+    Default: 172.3.4.0/24
+  dbvpcid:
+    Description: The ID of the VPC containing the Database to be used
+    Type: String
+    Default: '{{resolve:ssm:db_vpc_id_my:1}}'
+  dbvpccidr:
+    Description: The CIDR block of the VPC containing the Database to be used
+    Type: String
+    Default: '{{resolve:ssm:db_vpc_cidr_my:1}}'
+  environmenttag:
+    Description: The tag including the environment this template is provisioning
+    Type: String
+
+Resources:
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !Ref vpccidr
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: !Sub ${environmenttag} VPC
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Sub ${environmenttag} Internet Gateway
+  InternetGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      InternetGatewayId: !Ref InternetGateway
+      VpcId: !Ref VPC
+  
+  PublicSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      AvailabilityZone: !Select [ 0, !GetAZs '' ]
+      CidrBlock: !Ref public1cidr
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: !Sub ${environmenttag} Public Subnet 1
+  PrivateSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      AvailabilityZone: !Select [ 0, !GetAZs '' ]
+      CidrBlock: !Ref private1cidr
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: !Sub ${environmenttag} Private Subnet 1
+  NATGatewayEIP1:
+    Type: AWS::EC2::EIP
+    DependsOn: InternetGatewayAttachment
+    Properties:
+      Domain: vpc
+  NATGateway1:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId: !GetAtt NATGatewayEIP1.AllocationId
+      SubnetId: !Ref PublicSubnet1
+      Tags:
+        - Key: Name
+          Value: !Sub ${environmenttag} NAT Gateway 1
+  
+  PublicSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      AvailabilityZone: !Select [ 1, !GetAZs '' ]
+      CidrBlock: !Ref public2cidr
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: !Sub ${environmenttag} Public Subnet 2
+  PrivateSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      AvailabilityZone: !Select [ 1, !GetAZs '' ]
+      CidrBlock: !Ref private2cidr
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: !Sub ${environmenttag} Private Subnet 2
+  NATGatewayEIP2:
+    Type: AWS::EC2::EIP
+    DependsOn: InternetGatewayAttachment
+    Properties:
+      Domain: vpc
+  NATGateway2:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId: !GetAtt NATGatewayEIP2.AllocationId
+      SubnetId: !Ref PublicSubnet2
+      Tags:
+        - Key: Name
+          Value: !Sub ${environmenttag} NAT Gateway 2
+
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub ${environmenttag} Public Route Table
+  DefaultPublicRoute:
+    Type: AWS::EC2::Route
+    DependsOn: InternetGatewayAttachment
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+  Public1RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      SubnetId: !Ref PublicSubnet1
+  Public2RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      SubnetId: !Ref PublicSubnet2
+
+  PrivateRouteTable1:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub ${environmenttag} Private Route Table 1
+  DefaultPrivateRoute1:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable1
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref NATGateway1
+  Private1RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable1
+      SubnetId: !Ref PrivateSubnet1
+  PrivateRouteTable2:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub ${environmenttag} Private Route Table 2
+  DefaultPrivateRoute2:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable2
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref NATGateway2
+  Private2RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable2
+      SubnetId: !Ref PrivateSubnet2
+
+  PeeringConnection:
+    Type: AWS::EC2::VPCPeeringConnection
+    Properties:
+      PeerVpcId: !Ref dbvpcid
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub ${environmenttag} Peering Connection
+  PeeringRoute1:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable1
+      DestinationCidrBlock: !Ref dbvpccidr
+      VpcPeeringConnectionId: !Ref PeeringConnection
+  PeeringRoute2:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable2
+      DestinationCidrBlock: !Ref dbvpccidr
+      VpcPeeringConnectionId: !Ref PeeringConnection
+
+  VPCParam:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Description: An SSM parameter containing the ID of the VPC created with this template
+      Name: !Sub ${environmenttag}_vpc_id
+      Tier: Standard
+      Type: String
+      Value: !Ref VPC
+  Public1Param:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Description: An SSM parameter containing the ID of the first public subnet created with this template
+      Name: !Sub ${environmenttag}_public1_id
+      Tier: Standard
+      Type: String
+      Value: !Ref PublicSubnet1
+  Private1Param:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Description: An SSM parameter containing the ID of the first private subnet created with this template
+      Name: !Sub ${environmenttag}_private1_id
+      Tier: Standard
+      Type: String
+      Value: !Ref PrivateSubnet1
+  Public2Param:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Description: An SSM parameter containing the ID of the second public subnet created with this template
+      Name: !Sub ${environmenttag}_public2_id
+      Tier: Standard
+      Type: String
+      Value: !Ref PublicSubnet2
+  Private2Param:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Description: An SSM parameter containing the ID of the second private subnet created with this template
+      Name: !Sub ${environmenttag}_private2_id
+      Tier: Standard
+      Type: String
+      Value: !Ref PrivateSubnet2
