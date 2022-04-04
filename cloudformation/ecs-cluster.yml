@@ -6,7 +6,7 @@ Parameters:
   ecrpath:
     Description: The path to find ECR images
     Type: String
-    default: '{{resolve:ssm:ecr_path_my_dev:1}}'
+    Default: '{{resolve:ssm:ecr_path_my_dev:1}}'
   environmenttag:
     Description: The tag including the environment this template is provisioning
     Type: String
@@ -16,7 +16,7 @@ Resources:
   ECSCluster:
     Type: AWS::ECS::Cluster
     Properties:
-      ClusterName: !Sub ${environmenttag} Aline ECS Cluster
+      ClusterName: !Sub ${environmenttag}-Aline-ECS-Cluster
       ClusterSettings:
         - Name: containerInsights
           Value: enabled
@@ -26,7 +26,7 @@ Resources:
       AssumeRolePolicyDocument:
         Statement:
           - Effect: Allow
-            Principle:
+            Principal:
               Service: 
                 - ecs.amazonaws.com
             Action: 
@@ -57,11 +57,11 @@ Resources:
       AssumeRolePolicyDocument:
         Statement:
           - Effect: Allow
-            Principle:
+            Principal:
               Service:
                 - ecs-tasks.amazonaws.com
             Action:
-              - sts:assumeRole
+              - sts:AssumeRole
       Path: /
       Policies:
         - PolicyName: !Sub ${environmenttag}-ecs-task-exe
@@ -76,30 +76,30 @@ Resources:
                   - logs:CreateLogStream
                   - logs:PutLogEvents
                 Resource: '*'
-    AutoscaingRole:
-      Type: AWS::IAM::Role
-      Properties:
-        AssumeRolePolicyDocument:
-          Statement:
-            - Effect: Allow
-              Principle:
-                Service:
-                  - application-autoscaling.amazonaws.com
-              Action:
-                - sts:AssumeRole
-        Path: /
-        Policies:
-          - PolicyName: !Sub ${environmenttag}-ecs-autoscale
-            PolicyDocument:
-              Statement:
-                - Effect: Allow
-                  Action:
-                    - application-autoscaling:*
-                    - cloudwatch:DescribeAlarms
-                    - cloudwatch:PutMetricAlarm
-                    - ecs:DescribeServices
-                    - ecs:UpdateService
-                  Resource: '*'
+  AutoscaingRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - application-autoscaling.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Path: /
+      Policies:
+        - PolicyName: !Sub ${environmenttag}-ecs-autoscale
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action:
+                  - application-autoscaling:*
+                  - cloudwatch:DescribeAlarms
+                  - cloudwatch:PutMetricAlarm
+                  - ecs:DescribeServices
+                  - ecs:UpdateService
+                Resource: '*'
   LogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
@@ -118,7 +118,7 @@ Resources:
     Type: AWS::EC2::SecurityGroupIngress
     Properties:
       Description: Ingress from LB
-      GroupId:
+      GroupId: !Ref LoadBalancerSG
       IpProtocol: -1
       SourceSecurityGroupId: !Ref LoadBalancerSG
   ContainersSG:
@@ -131,70 +131,58 @@ Resources:
   ApplicationLoadBalancer:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
     Properties:
+      LoadBalancerAttributes:
+        - Key: load_balancing.cross_zone.enabled
+          Value: 'true'
       Scheme: internet-facing
       Subnets:
         - !Sub '{{resolve:ssm:${environmenttag}_public1_id}}'
         - !Sub '{{resolve:ssm:${environmenttag}_public2_id}}'
-      SecurityGroups:
-        - !Ref LoadBalancerSG
-  ALBListener:
+      Type: network
+  BankListener:
     Type: AWS::ElasticLoadBalancingV2::Listener
     Properties:
       LoadBalancerArn: !Ref ApplicationLoadBalancer
+      Port: 8083
+      Protocol: TCP
       DefaultActions:
         - Type: forward
-          TargetGroupArn: !Ref BankTargetGroup
-      Port: 80
-  BankListenerRule:
-    Type: AWS::ElasticLoadBalancingV2::ListenerRule
+          ForwardConfig:
+            TargetGroups:
+              - TargetGroupArn: !Ref BankTargetGroup
+  TransactionListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
     Properties:
-      Actions:
+      LoadBalancerArn: !Ref ApplicationLoadBalancer
+      Port: 8073
+      Protocol: TCP
+      DefaultActions:
         - Type: forward
-          TargetGroupArn: !Ref BankTargetGroup
-      Conditions:
-        - Field: path-pattern
-          PathPatternConfig:
-            - /bank*
-            - /branch*
-      ListenerArn: !Ref ALBListener
-      Priority: 1
-  TransactionListenerRule:
-    Type: AWS::ElasticLoadBalancingV2::ListenerRule
+          ForwardConfig:
+            TargetGroups:
+              - TargetGroupArn: !Ref TransactionTargetGroup
+  UnderwriterListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
     Properties:
-      Actions:
+      LoadBalancerArn: !Ref ApplicationLoadBalancer
+      Port: 8071
+      Protocol: TCP
+      DefaultActions:
         - Type: forward
-          TargetGroupArn: !Ref TransactionTargetGroup
-      Conditions:
-        - Field: path-pattern
-          PathPatternConfig:
-            - /trans*
-      ListenerArn: !Ref ALBListener
-      Priority: 1
-  UnderwriterListenerRule:
-    Type: AWS::ElasticLoadBalancingV2::ListenerRule
+          ForwardConfig:
+            TargetGroups:
+              - TargetGroupArn: !Ref UnderwriterTargetGroup
+  UserListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
     Properties:
-      Actions:
+      LoadBalancerArn: !Ref ApplicationLoadBalancer
+      Port: 8070
+      Protocol: TCP
+      DefaultActions:
         - Type: forward
-          TargetGroupArn: !Ref UnderwriterTargetGroup
-      Conditions:
-        - Field: path-pattern
-          PathPatternConfig:
-            - /applic*
-      ListenerArn: !Ref ALBListener
-      Priority: 1
-  UserListenerRule:
-    Type: AWS::ElasticLoadBalancingV2::ListenerRule
-    Properties:
-      Actions:
-        - Type: forward
-          TargetGroupArn: !Ref UserTargetGroup
-      Conditions:
-        - Field: path-pattern
-          PathPatternConfig:
-            - /login*
-            - /user*
-      ListenerArn: !Ref ALBListener
-      Priority: 1
+          ForwardConfig:
+            TargetGroups:
+              - TargetGroupArn: !Ref UserTargetGroup
 
   # Task Definitions
   BankTaskDefinition:
@@ -216,7 +204,7 @@ Resources:
             - Name: ENCRYPT_SECRET_KEY
               Value: !Sub '{{resolve:ssm:${environmenttag}-encrypt}}'
             - Name: JWT_SECRET_KEY
-              Value: !Sub '{{resolve:ssm:${environmenttag}-db-jwt}}'
+              Value: !Sub '{{resolve:ssm:${environmenttag}-jwt}}'
           Essential: true
           Image: !Sub ${ecrpath}/my-bank-microservice:latest
           PortMappings:
@@ -229,7 +217,7 @@ Resources:
               awslogs-group: !Ref LogGroup
               awslogs-region: !Ref AWS::Region
               awslogs-stream-prefix: bank-task-def
-      CPU: '256'
+      Cpu: '256'
       Memory: '512'
       ExecutionRoleArn: !Ref ECSTaskExecutionRole
       Family: !Sub ${environmenttag}-bank-task-family
@@ -255,7 +243,7 @@ Resources:
             - Name: ENCRYPT_SECRET_KEY
               Value: !Sub '{{resolve:ssm:${environmenttag}-encrypt}}'
             - Name: JWT_SECRET_KEY
-              Value: !Sub '{{resolve:ssm:${environmenttag}-db-jwt}}'
+              Value: !Sub '{{resolve:ssm:${environmenttag}-jwt}}'
           Essential: true
           Image: !Sub ${ecrpath}/my-transaction-microservice:latest
           PortMappings:
@@ -268,7 +256,7 @@ Resources:
               awslogs-group: !Ref LogGroup
               awslogs-region: !Ref AWS::Region
               awslogs-stream-prefix: transaction-task-def
-      CPU: '256'
+      Cpu: '256'
       Memory: '512'
       ExecutionRoleArn: !Ref ECSTaskExecutionRole
       Family: !Sub ${environmenttag}-transaction-task-family
@@ -294,7 +282,7 @@ Resources:
             - Name: ENCRYPT_SECRET_KEY
               Value: !Sub '{{resolve:ssm:${environmenttag}-encrypt}}'
             - Name: JWT_SECRET_KEY
-              Value: !Sub '{{resolve:ssm:${environmenttag}-db-jwt}}'
+              Value: !Sub '{{resolve:ssm:${environmenttag}-jwt}}'
           Essential: true
           Image: !Sub ${ecrpath}/my-underwriter-microservice:latest
           PortMappings:
@@ -307,7 +295,7 @@ Resources:
               awslogs-group: !Ref LogGroup
               awslogs-region: !Ref AWS::Region
               awslogs-stream-prefix: underwriter-task-def
-      CPU: '256'
+      Cpu: '256'
       Memory: '512'
       ExecutionRoleArn: !Ref ECSTaskExecutionRole
       Family: !Sub ${environmenttag}-underwriter-task-family
@@ -333,7 +321,7 @@ Resources:
             - Name: ENCRYPT_SECRET_KEY
               Value: !Sub '{{resolve:ssm:${environmenttag}-encrypt}}'
             - Name: JWT_SECRET_KEY
-              Value: !Sub '{{resolve:ssm:${environmenttag}-db-jwt}}'
+              Value: !Sub '{{resolve:ssm:${environmenttag}-jwt}}'
           Essential: true
           Image: !Sub ${ecrpath}/my-user-microservice:latest
           PortMappings:
@@ -346,7 +334,7 @@ Resources:
               awslogs-group: !Ref LogGroup
               awslogs-region: !Ref AWS::Region
               awslogs-stream-prefix: user-task-def
-      CPU: '256'
+      Cpu: '256'
       Memory: '512'
       ExecutionRoleArn: !Ref ECSTaskExecutionRole
       Family: !Sub ${environmenttag}-user-task-family
@@ -360,7 +348,7 @@ Resources:
     Properties:
       ServiceName: !Sub ${environmenttag}-bank-service
       Cluster: !Ref ECSCluster
-      LaunchType: Fargate
+      LaunchType: FARGATE
       DeploymentConfiguration:
         MaximumPercent: 200
         MinimumHealthyPercent: 100
@@ -378,12 +366,14 @@ Resources:
         - ContainerName: !Sub ${environmenttag}-bank
           ContainerPort: 8083
           TargetGroupArn: !Ref BankTargetGroup
+    DependsOn:
+      - BankListener
   TransactionService:
     Type: AWS::ECS::Service
     Properties:
       ServiceName: !Sub ${environmenttag}-transaction-service
       Cluster: !Ref ECSCluster
-      LaunchType: Fargate
+      LaunchType: FARGATE
       DeploymentConfiguration:
         MaximumPercent: 200
         MinimumHealthyPercent: 100
@@ -401,12 +391,14 @@ Resources:
         - ContainerName: !Sub ${environmenttag}-transaction
           ContainerPort: 8073
           TargetGroupArn: !Ref TransactionTargetGroup
+    DependsOn:
+      - TransactionListener
   UnderwriterService:
     Type: AWS::ECS::Service
     Properties:
       ServiceName: !Sub ${environmenttag}-underwriter-service
       Cluster: !Ref ECSCluster
-      LaunchType: Fargate
+      LaunchType: FARGATE
       DeploymentConfiguration:
         MaximumPercent: 200
         MinimumHealthyPercent: 100
@@ -424,12 +416,14 @@ Resources:
         - ContainerName: !Sub ${environmenttag}-underwriter
           ContainerPort: 8071
           TargetGroupArn: !Ref UnderwriterTargetGroup
+    DependsOn:
+      - UnderwriterListener
   UserService:
     Type: AWS::ECS::Service
     Properties:
       ServiceName: !Sub ${environmenttag}-user-service
       Cluster: !Ref ECSCluster
-      LaunchType: Fargate
+      LaunchType: FARGATE
       DeploymentConfiguration:
         MaximumPercent: 200
         MinimumHealthyPercent: 100
@@ -447,6 +441,8 @@ Resources:
         - ContainerName: !Sub ${environmenttag}-user
           ContainerPort: 8070
           TargetGroupArn: !Ref UserTargetGroup
+    DependsOn:
+      - UserListener
 
   # Target Groups
   BankTargetGroup:
@@ -456,12 +452,6 @@ Resources:
       Protocol: TCP
       TargetType: ip
       VpcId: !Sub '{{resolve:ssm:${environmenttag}_vpc_id}}'
-      HealthCheckPath: /health
-      HealthCheckProtocol: TCP
-      HealthCheckIntervalSeconds: 10
-      HealthCeckTimeoutSeconds: 10
-      HealthyThresholdCount: 2
-      UnhealthyThresholdCount: 2
   TransactionTargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
@@ -469,12 +459,6 @@ Resources:
       Protocol: TCP
       TargetType: ip
       VpcId: !Sub '{{resolve:ssm:${environmenttag}_vpc_id}}'
-      HealthCheckPath: /health
-      HealthCheckProtocol: TCP
-      HealthCheckIntervalSeconds: 10
-      HealthCeckTimeoutSeconds: 10
-      HealthyThresholdCount: 2
-      UnhealthyThresholdCount: 2
   UnderwriterTargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
@@ -482,12 +466,6 @@ Resources:
       Protocol: TCP
       TargetType: ip
       VpcId: !Sub '{{resolve:ssm:${environmenttag}_vpc_id}}'
-      HealthCheckPath: /health
-      HealthCheckProtocol: TCP
-      HealthCheckIntervalSeconds: 10
-      HealthCeckTimeoutSeconds: 10
-      HealthyThresholdCount: 2
-      UnhealthyThresholdCount: 2
   UserTargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
@@ -495,9 +473,3 @@ Resources:
       Protocol: TCP
       TargetType: ip
       VpcId: !Sub '{{resolve:ssm:${environmenttag}_vpc_id}}'
-      HealthCheckPath: /health
-      HealthCheckProtocol: TCP
-      HealthCheckIntervalSeconds: 10
-      HealthCeckTimeoutSeconds: 10
-      HealthyThresholdCount: 2
-      UnhealthyThresholdCount: 2
