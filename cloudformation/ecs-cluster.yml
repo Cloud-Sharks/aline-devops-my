@@ -121,6 +121,42 @@ Resources:
       GroupId: !Ref LoadBalancerSG
       IpProtocol: -1
       SourceSecurityGroupId: !Ref LoadBalancerSG
+  BankIngressRule:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      Description: SG Ingress for Bank MS
+      FromPort: 8083
+      ToPort: 8083
+      IpProtocol: TCP
+      CidrIp: 0.0.0.0/0
+      GroupId: !Ref LoadBalancerSG
+  TransactionIngressRule:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      Description: SG Ingress for Transaction MS
+      FromPort: 8073
+      ToPort: 8073
+      IpProtocol: TCP
+      CidrIp: 0.0.0.0/0
+      GroupId: !Ref LoadBalancerSG
+  UnderwriterIngressRule:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      Description: SG Ingress for Underwriter MS
+      FromPort: 8071
+      ToPort: 8071
+      IpProtocol: TCP
+      CidrIp: 0.0.0.0/0
+      GroupId: !Ref LoadBalancerSG
+  UserIngressRule:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      Description: SG Ingress for User MS
+      FromPort: 8070
+      ToPort: 8070
+      IpProtocol: TCP
+      CidrIp: 0.0.0.0/0
+      GroupId: !Ref LoadBalancerSG
   ContainersSG:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -358,7 +394,7 @@ Resources:
         AwsvpcConfiguration:
           AssignPublicIp: ENABLED
           SecurityGroups:
-            - !Ref ContainersSG
+            - !Ref LoadBalancerSG
           Subnets:
             - !Sub '{{resolve:ssm:${environmenttag}_private1_id}}'
             - !Sub '{{resolve:ssm:${environmenttag}_private2_id}}'
@@ -383,7 +419,7 @@ Resources:
         AwsvpcConfiguration:
           AssignPublicIp: ENABLED
           SecurityGroups:
-            - !Ref ContainersSG
+            - !Ref LoadBalancerSG
           Subnets:
             - !Sub '{{resolve:ssm:${environmenttag}_private1_id}}'
             - !Sub '{{resolve:ssm:${environmenttag}_private2_id}}'
@@ -408,7 +444,7 @@ Resources:
         AwsvpcConfiguration:
           AssignPublicIp: ENABLED
           SecurityGroups:
-            - !Ref ContainersSG
+            - !Ref LoadBalancerSG
           Subnets:
             - !Sub '{{resolve:ssm:${environmenttag}_private1_id}}'
             - !Sub '{{resolve:ssm:${environmenttag}_private2_id}}'
@@ -433,7 +469,7 @@ Resources:
         AwsvpcConfiguration:
           AssignPublicIp: ENABLED
           SecurityGroups:
-            - !Ref ContainersSG
+            - !Ref LoadBalancerSG
           Subnets:
             - !Sub '{{resolve:ssm:${environmenttag}_private1_id}}'
             - !Sub '{{resolve:ssm:${environmenttag}_private2_id}}'
