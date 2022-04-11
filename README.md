@@ -7,7 +7,7 @@
 Ansible is a configuration management tool that allows a controller to manage several other nodes. The playbooks here are sample plays to deploy and manage working environments.
 
 ## Cloudformation Templates
-Cloudformation is a tool used by AWS to provision and manage various AWS resources.
+Cloudformation is a tool used by AWS to provision and manage various AWS resources. The templates here create a VPC designed to host either an ECS or an EKS cluster with a peering connection to another VPC hosting a remote database and a sample ECS cluster.
 
 ## Docker Compose
 Docker Compose is a container deployment tool that helps in the creation of working deployment stacks. The compose files here can be deployed locally or on the AWS resource ECS with an ECS Docker context.
