@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.appLabel.underwriter }}-deployment
+  namespace: {{ .Values.nameSpace }}
+  labels:
+    app: {{ .Values.appLabel.underwriter }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.appLabel.underwriter }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.appLabel.underwriter }}
+    spec:
+      containers:
+        - name: {{ .Values.appLabel.underwriter }}
+          image: {{ .Values.imagePath }}{{ .Values.imageName.underwriter }}:v1.0
+          ports:
+            - containerPort: {{ .Values.usePort.underwriter }}
+          envFrom:
+            - configMapRef:
+                name: {{ .Release.Name }}-configmap
+            - secretRef:
+                name: {{ .Release.Name }}-secretmap

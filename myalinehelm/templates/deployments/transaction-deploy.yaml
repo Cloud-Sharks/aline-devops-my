@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.appLabel.transaction }}-deployment
+  namespace: {{ .Values.nameSpace }}
+  labels:
+    app: {{ .Values.appLabel.transaction }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.appLabel.transaction }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.appLabel.transaction }}
+    spec:
+      containers:
+        - name: {{ .Values.appLabel.transaction }}
+          image: {{ .Values.imagePath }}{{ .Values.imageName.transaction }}:v1.0
+          ports:
+            - containerPort: {{ .Values.usePort.transaction }}
+          envFrom:
+            - configMapRef:
+                name: {{ .Release.Name }}-configmap
+            - secretRef:
+                name: {{ .Release.Name }}-secretmap

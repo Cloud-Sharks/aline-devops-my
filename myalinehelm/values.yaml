@@ -1,0 +1,30 @@
+nameSpace: myaline-ns
+hostName: my.dev.cloudsharks.name
+replicaCount: 2
+
+appLabel:
+  bank: bank-my
+  transaction: transaction-my
+  underwriter: underwriter-my
+  user: user-my
+
+usePort:
+  bank: 8083
+  transaction: 8073
+  underwriter: 8071
+  user: 8070
+
+imagePath: temp
+imageName:
+  bank: my-bank-microservice
+  transaction: my-transaction-microservice
+  underwriter: my-underwriter-microservice
+  user: my-user-microservice
+
+DB_NAME: temp
+DB_PORT: "3306"
+DB_HOST: temp
+DB_USERNAME: temp
+DB_PASSWORD: temp
+ENCRYPT_SECRET_KEY: temp
+JWT_SECRET_KEY: temp
