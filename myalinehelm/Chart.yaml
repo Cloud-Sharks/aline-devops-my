@@ -1,0 +1,5 @@
+apiVersion: v2
+name: myaline
+description: A Helm chart for for deploying the Aline service
+type: application
+version: 0.1.0

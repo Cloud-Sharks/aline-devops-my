@@ -1,0 +1,39 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}-ingress
+  namespace: {{ .Values.nameSpace }}
+  {{- template "ingress.annotations" }}
+spec:
+  rules:
+    - host: {{ .Values.hostName }}
+      http:
+        paths:
+          - path: /users*
+            backend:
+              serviceName: {{ .Values.appLabel.user }}-service
+              servicePort: {{ .Values.usePort.user }}
+          - path: /login*
+            backend:
+              serviceName: {{ .Values.appLabel.user }}-service
+              servicePort: {{ .Values.usePort.user }}
+          - path: /applic*
+            backend:
+              serviceName: {{ .Values.appLabel.underwriter }}-service
+              servicePort: {{ .Values.usePort.underwriter }}
+          - path: /members*
+            backend:
+              serviceName: {{ .Values.appLabel.bank }}-service
+              servicePort: {{ .Values.usePort.bank }}
+          - path: /branch*
+            backend:
+              serviceName: {{ .Values.appLabel.bank }}-service
+              servicePort: {{ .Values.usePort.bank }}
+          - path: /bank*
+            backend:
+              serviceName: {{ .Values.appLabel.bank }}-service
+              servicePort: {{ .Values.usePort.bank }}
+          - path: /trans*
+            backend:
+              serviceName: {{ .Values.appLabel.transaction }}-service
+              servicePort: {{ .Values.usePort.transaction }}

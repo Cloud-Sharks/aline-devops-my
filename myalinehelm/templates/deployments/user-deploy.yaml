@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.appLabel.user }}-deployment
+  namespace: {{ .Values.nameSpace }}
+  labels:
+    app: {{ .Values.appLabel.user }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.appLabel.user }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.appLabel.user }}
+    spec:
+      containers:
+        - name: {{ .Values.appLabel.user }}
+          image: {{ .Values.imagePath }}{{ .Values.imageName.user }}:v1.0
+          ports:
+            - containerPort: {{ .Values.usePort.user }}
+          envFrom:
+            - configMapRef:
+                name: {{ .Release.Name }}-configmap
+            - secretRef:
+                name: {{ .Release.Name }}-secretmap

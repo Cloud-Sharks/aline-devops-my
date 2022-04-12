@@ -1,0 +1,13 @@
+apiVersion: v1
+entries:
+  myaline:
+  - apiVersion: v2
+    created: "2022-04-12T10:25:53.755767-07:00"
+    description: A Helm chart for for deploying the Aline service
+    digest: 4cad5c199013f437f347f3aed357b98be787e79c369c2e00494a482b289c6e21
+    name: myaline
+    type: application
+    urls:
+    - myaline-0.1.0.tgz
+    version: 0.1.0
+generated: "2022-04-12T10:25:53.7398605-07:00"

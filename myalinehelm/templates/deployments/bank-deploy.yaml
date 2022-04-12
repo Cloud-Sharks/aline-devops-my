@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.appLabel.bank }}-deployment
+  namespace: {{ .Values.nameSpace }}
+  labels:
+    app: {{ .Values.appLabel.bank }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.appLabel.bank }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.appLabel.bank }}
+    spec:
+      containers:
+        - name: {{ .Values.appLabel.bank }}
+          image: {{ .Values.imagePath }}{{ .Values.imageName.bank }}:v1.0
+          ports:
+            - containerPort: {{ .Values.usePort.bank }}
+          envFrom:
+            - configMapRef:
+                name: {{ .Release.Name }}-configmap
+            - secretRef:
+                name: {{ .Release.Name }}-secretmap

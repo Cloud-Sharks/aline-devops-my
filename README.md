@@ -15,5 +15,8 @@ Docker Compose is a container deployment tool that helps in the creation of work
 ## Kubernetes
 Kubernetes is a container orchestration platform that facilitates application deployment, management, and scaling. The manifest files here can be deployed locally or on the AWS resource EKS with the eksctl cli tool.
 
+## Helm
+Helm is a package manager to help deploy and manage Kubernetes applications. The sample chart here deploys the Aline project backend stack with an ingress.
+
 ## Terraform
 Terraform is an infrastructure as code tool that defines and provisions infrastructure. The terraform files here are designed to create infrastucture on AWS to be used by an EKS cluster.
