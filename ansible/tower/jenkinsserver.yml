@@ -1,0 +1,8 @@
+- name: Setup Jenkins Server
+  hosts: temp
+  become: true 
+  roles:
+    - geerlingguy.repo-epel
+    - geerlingguy.jenkins
+    - geerlingguy.git
+    - tecris.maven
