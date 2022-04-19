@@ -1,0 +1,25 @@
+- name: Setup Server with CICD Pipeline
+  hosts: temp
+  become: true 
+  roles:
+    - geerlingguy.repo-epel
+    - geerlingguy.java
+    - geerlingguy.git
+    - role: geerlingguy.jenkins
+      vars:
+        jenkins_admin_username: admin
+        jenkins_admin_password: admin
+        jenkins_java_options: -Djenkins.install.runSetupWizard=true
+    - role: geerlingguy.mysql
+      vars:
+        mysql_databases:
+          - name: sonar
+        mysql_users:
+          - name: sonar
+            password: sonar
+            priv: "sonar.*:ALL"
+    - role: lrk.sonarqube
+      vars:
+        sonar_db_user: sonar
+        sonar_db_pass: sonar
+        sonar_jdbc_url: jdbc:mysql://localhost:3306/sonar?useUnicode=true&characterEncoding=utf8&rewriteBatchedStatements=true&useConfigs=maxPerformance

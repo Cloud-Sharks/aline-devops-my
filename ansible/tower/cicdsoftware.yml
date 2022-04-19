@@ -1,0 +1,23 @@
+- name: Setup Server with Tools to run the Project
+  hosts: temp
+  become: true 
+  roles:
+    - geerlingguy.repo-epel
+    - geerlingguy.git
+    - geerlingguy.docker
+    - role: geerlingguy.pip
+      vars:
+        pip_install_packages:
+          - name: docker
+    - geerlingguy.java
+    - gantsign.maven
+    - andrewrothstein.kubectl
+    - role: tommarshall.awscli
+      vars:
+        awscli_users:
+          profiles:
+            - name: temp
+              access_key_id: temp
+              secret_access_key: temp
+              region: temp
+              output: temp

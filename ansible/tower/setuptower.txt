@@ -1,0 +1,8 @@
+yum update
+yum install wget
+yum install ansible
+wget https://releases.ansible.com/ansible-tower/setup/ansible-tower-setup-3.7.5-1.tar.gz
+tar xvzf ansible-tower-setup-3.7.5-1.tar.gz
+cd ansible-tower-setup-3.7.5-1.tar.gz
+vi inventory
+./setup.sh
