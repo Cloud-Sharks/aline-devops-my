@@ -1,4 +1,4 @@
-- hosts: webserver
+- hosts: localhost
   tasks:
     - name: Install Apache
       yum:
