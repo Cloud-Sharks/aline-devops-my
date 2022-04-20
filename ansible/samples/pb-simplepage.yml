@@ -1,7 +1,7 @@
 - hosts: localhost
-  become: true
   tasks:
     - name: Install Apache
+      become_user: root
       yum:
         name: httpd
         state: present
