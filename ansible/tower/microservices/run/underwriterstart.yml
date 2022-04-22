@@ -1,0 +1,19 @@
+- name: Start Microservices from .jar Files
+  hosts: temp
+  roles:
+    - geerlingguy.java
+  tasks:
+    - name: Ensure wget Present
+      package:
+        name: wget
+        status: present
+    - name: Ensure Suitable Directory Exists
+      file:
+        path: /usr/aline-ms
+        state: directory
+    - name: Get Underwriter .jar File
+      get_url:
+        url: https://myaline.jfrog.io/artifactory/myaline-generic-local/alinems/underwriterms.jar
+        dest: /usr/aline-ms/underwriter-ms.jar
+    - name: Start Underwriter Service
+      command: nohup java -jar /usr/aline-ms/underwriter-ms.jar &

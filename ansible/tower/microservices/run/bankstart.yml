@@ -1,0 +1,20 @@
+- name: Start Microservices from .jar Files
+  hosts: temp
+  roles:
+    - geerlingguy.java
+  tasks:
+    - name: Ensure wget Present
+      package:
+        name: wget
+        status: present
+    - name: Ensure Suitable Directory Exists
+      file:
+        path: /usr/aline-ms
+        state: directory
+    - name: Get Bank .jar File
+      get_url:
+        url: https://myaline.jfrog.io/artifactory/myaline-generic-local/alinems/bankms.jar
+        dest: /usr/aline-ms/bank-ms.jar
+    - name: Start Bank Service
+      command: nohup java -jar /usr/aline-ms/bank-ms.jar &
+

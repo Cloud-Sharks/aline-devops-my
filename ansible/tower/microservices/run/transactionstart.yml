@@ -1,0 +1,19 @@
+- name: Start Microservices from .jar Files
+  hosts: temp
+  roles:
+    - geerlingguy.java
+  tasks:
+    - name: Ensure wget Present
+      package:
+        name: wget
+        status: present
+    - name: Ensure Suitable Directory Exists
+      file:
+        path: /usr/aline-ms
+        state: directory
+    - name: Get Transaction .jar File
+      get_url:
+        url: https://myaline.jfrog.io/artifactory/myaline-generic-local/alinems/transactionms.jar
+        dest: /usr/aline-ms/transaction-ms.jar
+    - name: Start Transaction Service
+      command: nohup java -jar /usr/aline-ms/transaction-ms.jar &

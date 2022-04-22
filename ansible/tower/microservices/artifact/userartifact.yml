@@ -1,0 +1,39 @@
+- name: Build and Upload user Artifact
+  hosts: temp 
+  roles:
+    - geerlingguy.git
+    - geerlingguy.java
+    - gantsign.maven
+  tasks:
+    - name: Ensure wget Present
+      package:
+        name: wget
+        status: present
+    - name: Ensure Suitable Directory exists
+      file:
+        path: /tmp/alinems/user
+        state: directory
+    - name: Checkout User Code from Github
+      git:
+        repo: https://github.com/Cloud-Sharks/aline-user-microservice-my.git
+        dest: /tmp/alinems/user
+        singe_branch: yes
+        version: master
+    - name: Init and Update Submodule
+      command:
+        cmd: git submodule init && git submodule update
+        chdir: /tmp/alinems/user/aline-user-microservice-my
+    - name: Generate User Artifact
+      command: 
+        cmd: mvn package -DskipTests
+        chdir: /tmp/alinems/user/aline-user-microservice-my
+    - name: Upload User Artifact
+      shell:
+        cmd: curl -H "X-JFrog-Art-Api:$APIKEY" -T user-microservice-0.1.0.jar "https://myaline.jfrog.io/artifactory/myaline-generic-local/alinems/userms.jar"
+        chdir: /tmp/alinems/user/aline-user-microservice-my/user-microservice/target
+        environment:
+          APIKEY: {{ jfrog-apikey }}
+    - name: Clean Up Environment
+      file:
+        path: /tmp/alinems/user
+        state: absent
