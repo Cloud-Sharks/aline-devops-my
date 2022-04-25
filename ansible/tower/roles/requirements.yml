@@ -1,0 +1,11 @@
+- src: https://github.com/geerlingguy/ansible-role-repo-epel
+- src: https://github.com/geerlingguy/ansible-role-java
+- src: https://github.com/geerlingguy/ansible-role-git
+- src: https://github.com/geerlingguy/ansible-role-jenkins
+- src: https://github.com/geerlingguy/ansible-role-mysql
+- src: https://github.com/geerlingguy/ansible-role-docker
+- src: https://github.com/geerlingguy/ansible-role-pip
+- src: https://github.com/lrk/ansible-role-sonarqube
+- src: https://github.com/gantsign/ansible-role-maven
+- src: https://github.com/andrewrothstein/ansible-kubectl
+- src: https://github.com/tommarshall/ansible-role-awscli
