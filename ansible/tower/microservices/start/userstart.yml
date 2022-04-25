@@ -1,9 +1,5 @@
 - name: Build and Upload user Artifact
   hosts: temp 
-  roles:
-    - geerlingguy.git
-    - geerlingguy.java
-    - gantsign.maven
   tasks:
     - name: Ensure wget Present
       package:
