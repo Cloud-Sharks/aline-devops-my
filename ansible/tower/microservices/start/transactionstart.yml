@@ -1,0 +1,33 @@
+- name: Build and Upload Transaction Artifact
+  hosts: temp 
+  roles:
+    - geerlingguy.git
+    - geerlingguy.java
+    - gantsign.maven
+  tasks:
+    - name: Ensure wget Present
+      package:
+        name: wget
+        status: present
+    - name: Ensure Suitable Directory exists
+      file:
+        path: /tmp/alinems/transaction
+        state: directory
+    - name: Checkout Transaction Code from Github
+      git:
+        repo: https://github.com/Cloud-Sharks/aline-transaction-microservice-my.git
+        dest: /tmp/alinems/transaction
+        singe_branch: yes
+        version: master
+    - name: Init and Update Submodule
+      command:
+        cmd: git submodule init && git submodule update
+        chdir: /tmp/alinems/transaction/aline-transaction-microservice-my
+    - name: Generate Transaction Artifact
+      command: 
+        cmd: mvn package -DskipTests
+        chdir: /tmp/alinems/transaction/aline-transaction-microservice-my
+    - name: Start Transaction Artifact
+      shell:
+        cmd: nohup java -jar transaction-microservice-0.1.0.jar &
+        chdir: /tmp/alinems/transaction/aline-transaction-microservice-my/transaction-microservice/target

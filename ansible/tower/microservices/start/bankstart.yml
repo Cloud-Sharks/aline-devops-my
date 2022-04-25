@@ -1,0 +1,33 @@
+- name: Build and Upload Bank Artifact
+  hosts: temp 
+  roles:
+    - geerlingguy.git
+    - geerlingguy.java
+    - gantsign.maven
+  tasks:
+    - name: Ensure wget Present
+      package:
+        name: wget
+        status: present
+    - name: Ensure Suitable Directory exists
+      file:
+        path: /tmp/alinems/bank
+        state: directory
+    - name: Checkout Bank Code from Github
+      git:
+        repo: https://github.com/Cloud-Sharks/aline-bank-microservice-my.git
+        dest: /tmp/alinems/bank
+        singe_branch: yes
+        version: master
+    - name: Init and Update Submodule
+      command:
+        cmd: git submodule init && git submodule update
+        chdir: /tmp/alinems/bank/aline-bank-microservice-my
+    - name: Generate Bank Artifact
+      command: 
+        cmd: mvn package -DskipTests
+        chdir: /tmp/alinems/bank/aline-bank-microservice-my
+    - name: Start Bank Artifact
+      shell:
+        cmd: nohup java -jar bank-microservice-0.1.0.jar &
+        chdir: /tmp/alinems/bank/aline-bank-microservice-my/bank-microservice/target
