@@ -1,10 +1,6 @@
 - name: Build and Upload underwriter Artifact
   hosts: temp 
   tasks:
-    - name: Ensure wget Present
-      package:
-        name: wget
-        status: present
     - name: Ensure Suitable Directory exists
       file:
         path: /tmp/alinems/underwriter
