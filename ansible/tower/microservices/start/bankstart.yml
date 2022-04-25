@@ -13,11 +13,11 @@
     - name: Check
       command: ls /tmp/alinems/bank
     - name: Init and Update Submodule
-      command: "git submodule init && git submodule update"
-        args:
-          chdir: /tmp/alinems/bank/
+      shell:
+        cmd: git submodule init && git submodule update
+        chdir: /tmp/alinems/bank/
     - name: Generate Bank Artifact
-      command: 
+      shell: 
         cmd: mvn package -DskipTests
         chdir: /tmp/alinems/bank/
     - name: Start Bank Artifact
