@@ -9,7 +9,6 @@
       git:
         repo: https://github.com/Cloud-Sharks/aline-transaction-microservice-my.git
         dest: /tmp/alinems/transaction
-        singe_branch: yes
         version: master
     - name: Init and Update Submodule
       command:

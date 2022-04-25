@@ -9,7 +9,6 @@
       git:
         repo: https://github.com/Cloud-Sharks/aline-underwriter-microservice-my.git
         dest: /tmp/alinems/underwriter
-        singe_branch: yes
         version: master
     - name: Init and Update Submodule
       command:
