@@ -11,14 +11,14 @@
         dest: /tmp/alinems/transaction
         version: master
     - name: Init and Update Submodule
-      command:
+      shell:
         cmd: git submodule init && git submodule update
-        chdir: /tmp/alinems/transaction/aline-transaction-microservice-my
+        chdir: /tmp/alinems/transaction/
     - name: Generate Transaction Artifact
-      command: 
+      shell: 
         cmd: mvn package -DskipTests
-        chdir: /tmp/alinems/transaction/aline-transaction-microservice-my
+        chdir: /tmp/alinems/transaction/
     - name: Start Transaction Artifact
       shell:
         cmd: nohup java -jar transaction-microservice-0.1.0.jar &
-        chdir: /tmp/alinems/transaction/aline-transaction-microservice-my/transaction-microservice/target
+        chdir: /tmp/alinems/transaction/transaction-microservice/target

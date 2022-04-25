@@ -10,8 +10,6 @@
         repo: https://github.com/Cloud-Sharks/aline-bank-microservice-my.git
         dest: /tmp/alinems/bank
         version: master
-    - name: Check
-      command: ls /tmp/alinems/bank
     - name: Init and Update Submodule
       shell:
         cmd: git submodule init && git submodule update

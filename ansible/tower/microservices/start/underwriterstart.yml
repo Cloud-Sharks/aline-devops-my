@@ -11,14 +11,14 @@
         dest: /tmp/alinems/underwriter
         version: master
     - name: Init and Update Submodule
-      command:
+      shell:
         cmd: git submodule init && git submodule update
-        chdir: /tmp/alinems/underwriter/aline-underwriter-microservice-my
+        chdir: /tmp/alinems/underwriter/
     - name: Generate Underwriter Artifact
-      command: 
+      shell: 
         cmd: mvn package -DskipTests
-        chdir: /tmp/alinems/underwriter/aline-underwriter-microservice-my
+        chdir: /tmp/alinems/underwriter/
     - name: Start Underwriter Artifact
       shell:
         cmd: nohup java -jar underwriter-microservice-0.1.0.jar &
-        chdir: /tmp/alinems/underwriter/aline-underwriter-microservice-my/underwriter-microservice/target
+        chdir: /tmp/alinems/underwriter/underwriter-microservice/target

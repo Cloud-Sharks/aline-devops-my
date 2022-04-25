@@ -11,14 +11,14 @@
         dest: /tmp/alinems/user
         version: master
     - name: Init and Update Submodule
-      command:
+      shell:
         cmd: git submodule init && git submodule update
-        chdir: /tmp/alinems/user/aline-user-microservice-my
+        chdir: /tmp/alinems/user/
     - name: Generate User Artifact
-      command: 
+      shell: 
         cmd: mvn package -DskipTests
-        chdir: /tmp/alinems/user/aline-user-microservice-my
+        chdir: /tmp/alinems/user/
     - name: Start User Artifact
       shell:
         cmd: nohup java -jar user-microservice-0.1.0.jar &
-        chdir: /tmp/alinems/user/aline-user-microservice-my/user-microservice/target
+        chdir: /tmp/alinems/user/user-microservice/target
