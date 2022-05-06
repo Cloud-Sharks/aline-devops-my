@@ -13,8 +13,6 @@ target/
 *.cmd
 scripts/
 ssh_keys/
-*.mod
-*.sum
 
 ### STS ###
 .apt_generated
