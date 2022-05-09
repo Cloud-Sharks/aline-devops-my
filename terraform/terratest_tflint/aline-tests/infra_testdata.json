@@ -1,5 +1,5 @@
 {
-    "vpcName": "",
-    "gatewayName": "",
-    "peeringName": ""
+    "vpcName": "aline_vpc_my_dev",
+    "gatewayName": "aline_igw_my_dev",
+    "peeringName": "aline_peering_my_dev"
 }

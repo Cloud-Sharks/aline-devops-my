@@ -167,11 +167,27 @@ resource "aws_route_table_association" "aline_private2_associate_my_dev"{
     route_table_id = aws_route_table.aline_route_table_private_my_dev.id
 }
 
+// create ec2 instance to act as a bastion
+resource "aws_instance" "aline_bastion_my_dev"{
+    instance_type = "t2.micro"
+    ami = var.ami_id
+    subnet_id = aws_subnet.aline_public_sub1_my_dev.id
+    key_name = var.ssh_key_name
+    associate_public_ip_address = true
+    vpc_security_group_ids = [aws_security_group.aline_external_communication_my.id, aws_security_group.aline_internal_communication_my.id]
+    tags = {
+        Name = "aline_bastion_my_dev"
+    }
+}
+
 // establish peering connection
 resource "aws_vpc_peering_connection" "aline_peering_my_dev"{
     peer_vpc_id = var.db_vpc_id
     vpc_id = aws_vpc.aline_vpc_my_dev.id
     auto_accept = true
+    tags = {
+        Name = "aline_peering_my_dev"
+    }
 }
 
 // Store necessary info for EKS cluster as secrets

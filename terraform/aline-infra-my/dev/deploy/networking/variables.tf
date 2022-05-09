@@ -38,6 +38,16 @@ variable "private_block2"{
     description = "CIDR block for private subnet 2"
 }
 
+variable "ami_id"{
+    type = string
+    description = "AMI ID for the bastion"
+}
+
+variable "ssh_key_name"{
+    type = string
+    description = "Name of the ssh key for the bastion"
+}
+
 variable "db_vpc_id"{
     type = string
     description = "ID of the subnet with the remote database"

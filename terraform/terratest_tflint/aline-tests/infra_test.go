@@ -1,4 +1,4 @@
-package aline-tests
+package alinetests
 
 import (
 	"encoding/json"
@@ -7,43 +7,42 @@ import (
 	"os"
 	"testing"
 
-	"github.com/gruntwork-io/terratest/modules/aws"
+	// "github.com/gruntwork-io/terratest/modules/aws"
 	"github.com/gruntwork-io/terratest/modules/terraform"
 	"github.com/stretchr/testify/assert"
 )
 
-type DataStruct struct{
-	vpcName	string `json:"vpcName"`
-	gatewayName	string `json:"gatewayName"`
-	peeringName	string `json:"peeringName"`
+type DataStruct struct {
+	VpcName     string `json:"vpcName"`
+	GatewayName string `json:"gatewayName"`
+	PeeringName string `json:"peeringName"`
 }
 
 var ExpectedValues DataStruct
 
-func init(){
+func init() {
 	jsonFile, err := os.Open("./infra_testdata.json")
-	if err != nil{
+	if err != nil {
 		fmt.Println(err)
 	}
 	byteValue, _ := ioutil.ReadAll(jsonFile)
 	json.Unmarshal(byteValue, &ExpectedValues)
 }
 
-func TestAlineInfra(t *testing.T){
+func TestAlineInfra(t *testing.T) {
 	terraformOptions := terraform.WithDefaultRetryableErrors(t, &terraform.Options{
-		TerraformDir: "../../dev/deploy/networking",
-		VarFiles: []string{"terraform.tfvars"},
-		NoColor: true,
-		EnvVars: map[string]string{
-			"AWS_DEFAULT_REGION": "us-west-1"
-		}
+		TerraformDir: "../../aline-infra-my/dev/deploy/networking",
+		VarFiles:     []string{"terraform.tfvars"},
+		NoColor:      true,
 	})
 	defer terraform.Destroy(t, terraformOptions)
 	terraform.InitAndApply(t, terraformOptions)
-	actualVPCName := terraform.terraform.Output(t, terraformOptions, "")
-	actualGatewayName := terraform.terraform.Output(t, terraformOptions, "")
-	actualPeeringName := terraform.terraform.Output(t, terraformOptions, "")
-	assert.Equal(t, ExpectedValues.vpcName, actualVPCName)
-	assert.Equal(t, ExpectedValues.gatewayName, actualGatewayName)
-	assert.Equal(t, ExpectedValues.peeringName, actualPeeringName)
+	actualVPCName := terraform.Output(t, terraformOptions, "vpc_name")
+	actualGatewayName := terraform.Output(t, terraformOptions, "gateway_name")
+	actualPeeringName := terraform.Output(t, terraformOptions, "peering_name")
+	actualBastionID := terraform.Output(t, terraformOptions, "bastion_info")
+	assert.Equal(t, ExpectedValues.VpcName, actualVPCName)
+	assert.Equal(t, ExpectedValues.GatewayName, actualGatewayName)
+	assert.Equal(t, ExpectedValues.PeeringName, actualPeeringName)
+	assert.NotNil(t, actualBastionID)
 }

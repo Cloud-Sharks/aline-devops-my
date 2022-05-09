@@ -14,16 +14,33 @@ pipeline{
                 sh'terraform -chdir=${TF_WORKDIR_MY} init'
             }
         }
-        stage('Terraform Validate'){
+        stage('Terraform Validate and Lint'){
             steps{
                 //verify terraform file is correctly formatted
                 sh'terraform -chdir=${TF_WORKDIR_MY} validate -json'
+                //lint
+                sh'tflint ${TF_WORKDIR_MY}'
             }
         }
         stage('Terraform Plan'){
             steps{
                 //run terraform plan
                 sh'terraform -chdir=${TF_WORKDIR_MY} plan -var-file ${TERRAFORM_VARS} > temp.txt'
+            }
+        }
+        stage('Terratest'){
+            //check for any necessary changes from plan output
+            when{
+                not{
+                    expression{
+                        return readFile('temp.txt').contains('No changes.')
+                    }
+                }
+            }
+            steps{
+                dir('terraform/terratest_tflint/aline-tests'){
+                    sh'go test'
+                }
             }
         }
         stage('Terraform Apply'){
