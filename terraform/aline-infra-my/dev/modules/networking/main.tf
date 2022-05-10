@@ -178,6 +178,11 @@ resource "aws_instance" "aline_bastion_my_dev"{
     tags = {
         Name = "aline_bastion_my_dev"
     }
+    user_data = <<EOF
+#!/bin/sh
+echo 'Hello World' > index.html
+nohup busybox httpd -f -p 8080 &
+EOF
 }
 
 // establish peering connection

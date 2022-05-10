@@ -6,8 +6,10 @@ import (
 	"io/ioutil"
 	"os"
 	"testing"
+	"time"
 
 	// "github.com/gruntwork-io/terratest/modules/aws"
+	http_helper "github.com/gruntwork-io/terratest/modules/http-helper"
 	"github.com/gruntwork-io/terratest/modules/terraform"
 	"github.com/stretchr/testify/assert"
 )
@@ -37,12 +39,21 @@ func TestAlineInfra(t *testing.T) {
 	})
 	defer terraform.Destroy(t, terraformOptions)
 	terraform.InitAndApply(t, terraformOptions)
+
 	actualVPCName := terraform.Output(t, terraformOptions, "vpc_name")
-	actualGatewayName := terraform.Output(t, terraformOptions, "gateway_name")
-	actualPeeringName := terraform.Output(t, terraformOptions, "peering_name")
-	actualBastionID := terraform.Output(t, terraformOptions, "bastion_info")
+	t.Logf("Expected VPC Name: %s - Actual VPC Name: %s", ExpectedValues.VpcName, actualVPCName)
 	assert.Equal(t, ExpectedValues.VpcName, actualVPCName)
+
+	actualGatewayName := terraform.Output(t, terraformOptions, "gateway_name")
+	t.Logf("Expected Gateway Name: %s - Actual Gateway Name: %s", ExpectedValues.GatewayName, actualGatewayName)
 	assert.Equal(t, ExpectedValues.GatewayName, actualGatewayName)
+
+	actualPeeringName := terraform.Output(t, terraformOptions, "peering_name")
+	t.Logf("Expected Peering Connection Name: %s - Actual Peering Connection Name: %s", ExpectedValues.PeeringName, actualPeeringName)
 	assert.Equal(t, ExpectedValues.PeeringName, actualPeeringName)
-	assert.NotNil(t, actualBastionID)
+
+	bastionIP := terraform.Output(t, terraformOptions, "bastion_ip")
+	bastionURL := fmt.Sprintf("http://%s:8080", bastionIP)
+	t.Logf("Testing connection to %s", bastionURL)
+	http_helper.HttpGetWithRetry(t, bastionURL, nil, 200, "Hello World", 30, 5*time.Second)
 }
